@@ -32,6 +32,10 @@ The identity anchors remain Scout Blue `#21497b`, Thinker Orange `#eb7114`, Buil
 
 When updating these tokens, compare with the shared source, preserve identity values and inspect the product's contrast and responsive layout. Treat a new shared proposal as a separate adoption decision.
 
+## Motion
+
+Use brief, softly eased reveals when the page and generated previews appear. Entrance movement is 2 to 6 px, with durations of 240 to 440 ms and short staggered delays. Control feedback moves icons or buttons by 1 to 2 px. Keep reveal effects on opacity and transforms, with content available immediately and no added animation dependency. Respect `prefers-reduced-motion` by showing the final state directly and disabling animation and transitions, including the loading spinner.
+
 ## Generated output
 
 Branding applies to the generator's interface and setup attribution. Generated icons use the user's own logo. Manifest names come from the uploaded filename. The default output colors remain neutral and can be edited for the user's website.
