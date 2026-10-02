@@ -1,35 +1,58 @@
-# Favicon Forge
+# VINASIG Favicon Forge
 
-A static Astro web app that turns a logo into a complete favicon package. Image processing and ZIP creation happen in the browser; the source file is never uploaded.
+Generate a complete favicon package from one logo. Choose or drop an image, review the output sizes, and download a ZIP. Image decoding, resizing and packaging happen in your browser. The application does not upload your logo or require an account.
 
-## Run locally
+- [Open Favicon Forge](https://vinasig.github.io/favicon-forge/)
+- [Source repository](https://github.com/VINASIG/favicon-forge)
+- [VINASIG](https://github.com/VINASIG)
 
-```bash
-npm install
+## Ownership and project context
+
+Favicon Forge originated in `NhanAZ-Web/favicon-forge` and was transferred to VINASIG on 2 October 2026. The repository transfer keeps the project's existing Git history and original author credits. The product name and repository slug remain Favicon Forge and `favicon-forge`.
+
+The application uses Astro for a static page, Canvas for local image processing, and JSZip for packaging. VINASIG's supplied logo exports, Space Grotesk font, identity colors and Lucide interface icons define the website's visual direction. See [the brand integration record](docs/BRAND.md) and [the project guide for SI agents](AGENTS.md).
+
+VINASIG uses **Super Intelligence (SI)** and **SI agents** in project-authored guidance. This is a naming convention. Preserve the original wording of external source titles, official names, quotations and technical identifiers.
+
+## Local development
+
+Use Node 24 as recorded in `.node-version` and install the locked dependencies.
+
+```sh
+npm ci
 npm run dev
 ```
 
-Open the URL printed by Astro in the terminal.
+Open `http://localhost:4321/favicon-forge/`. The default base path matches the published project site.
 
-## Build
-
-```bash
+```sh
+npm run check
 npm run build
 npm run preview
 ```
 
-## Deploy to GitHub Pages
+The production build is written to `dist/`. Local inspection files belong in ignored `output/`.
 
-The workflow at `.github/workflows/deploy.yml` builds and deploys on every push to `main`. It selects `BASE_PATH` automatically: project sites use `https://username.github.io/repository-name/`, while `username.github.io` repositories use the root domain.
+## GitHub Pages
 
-In the repository, enable **Settings → Pages → Source: GitHub Actions**.
+The workflow in [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) checks, builds and deploys every push to `main`. The Pages source must be **GitHub Actions**.
+
+The workflow derives `SITE_URL` from the current repository owner and `BASE_PATH` from the repository name. The VINASIG deployment uses `https://vinasig.github.io/favicon-forge/`. Asset paths, the local font and canonical metadata respect the deployment base path.
+
+For a custom domain, set `SITE_URL` to its origin and `BASE_PATH` to an empty string before building. Keep preview configuration consistent with the build configuration. GitHub redirects the transferred repository URL, but it does not redirect the old GitHub Pages address. Update links that still point to `https://nhanaz-web.github.io/favicon-forge/`.
 
 ## Generated package
 
-- `favicon.ico` containing 16×16, 32×32 and 48×48 icons.
+- `favicon.ico` containing 16 × 16, 32 × 32 and 48 × 48 images.
 - `favicon-16x16.png` and `favicon-32x32.png`.
-- `apple-touch-icon.png` at 180×180.
+- `apple-touch-icon.png` at 180 × 180.
 - `android-chrome-192x192.png` and `android-chrome-512x512.png`.
-- `android-chrome-512x512-maskable.png` for Android PWA installs.
+- `android-chrome-512x512-maskable.png`.
 - `site.webmanifest`.
 - `favicon-snippet.html` and `README.txt` setup instructions.
+
+The generated images come from the uploaded logo. The manifest derives its site name from the filename. Adjust its name, colors and start URL for the consuming website. VINASIG attribution appears in the setup instructions, without adding VINASIG artwork to generated icons.
+
+## Licenses and source records
+
+The transfer does not introduce a new software license or replace existing author credits. VINASIG logo artwork has no additional license granted by this repository. Space Grotesk's SIL Open Font License is included at [`public/fonts/OFL.txt`](public/fonts/OFL.txt). The published site also includes the existing [Lucide notices](public/licenses/lucide.txt) and [JSZip license text](public/licenses/jszip.txt). These files apply to their respective dependencies.

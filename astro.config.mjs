@@ -1,8 +1,9 @@
 import { defineConfig } from 'astro/config';
 
-// Set BASE_PATH to the repository name in GitHub Pages project deployments.
-// Leave it empty for a custom domain or a user/org root page.
+// The workflow supplies the current owner and repository path at build time.
+// Set BASE_PATH to an empty string for a custom domain or organization root site.
 export default defineConfig({
   output: 'static',
-  base: process.env.BASE_PATH || undefined,
+  site: process.env.SITE_URL || 'https://vinasig.github.io',
+  base: process.env.BASE_PATH ?? '/favicon-forge',
 });

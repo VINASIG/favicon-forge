@@ -1,7 +1,13 @@
 ---
+import { ArrowUpRight, Download, ShieldCheck, Upload } from '@lucide/astro';
+import '../styles/tokens.css';
+import '../styles/app.css';
+
 const basePath = import.meta.env.BASE_URL.endsWith('/')
   ? import.meta.env.BASE_URL
   : `${import.meta.env.BASE_URL}/`;
+const canonicalURL = new URL(basePath, Astro.site);
+const description = 'Generate a complete favicon package from your logo with VINASIG Favicon Forge. Your image stays in your browser.';
 ---
 
 <!doctype html>
@@ -9,37 +15,51 @@ const basePath = import.meta.env.BASE_URL.endsWith('/')
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
-    <meta name="theme-color" content="#eaf5ff" />
-    <meta
-      name="description"
-      content="Generate a complete favicon package from your logo, directly in your browser."
-    />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <meta name="theme-color" content="#f7f6f4" />
+    <meta name="description" content={description} />
+    <meta property="og:title" content="VINASIG Favicon Forge" />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL} />
+    <link rel="canonical" href={canonicalURL} />
+    <link rel="preload" href={`${basePath}fonts/SpaceGrotesk-VariableFont_wght.ttf`} as="font" type="font/ttf" crossorigin />
+    <link rel="stylesheet" href={`${basePath}fonts/font.css`} />
     <link rel="icon" href={`${basePath}favicon.svg`} type="image/svg+xml" />
-    <title>Favicon Forge - Generate favicons from your logo</title>
+    <link rel="icon" href={`${basePath}brand/favicon-16.png`} type="image/png" sizes="16x16" />
+    <link rel="icon" href={`${basePath}brand/favicon-32.png`} type="image/png" sizes="32x32" />
+    <link rel="icon" href={`${basePath}brand/favicon-48.png`} type="image/png" sizes="48x48" />
+    <title>VINASIG Favicon Forge - Generate favicons from your logo</title>
   </head>
   <body>
+    <a class="skip-link" href="#generator">Skip to generator</a>
+    <header class="site-header page-shell">
+      <div class="brand">
+        <a class="brand-link" href="https://github.com/VINASIG" aria-label="VINASIG on GitHub">
+          <img src={`${basePath}brand/primary-color.svg`} width="162" height="42" alt="VINASIG" />
+        </a>
+        <span class="product-name">Favicon Forge</span>
+      </div>
+      <a class="source-link" href="https://github.com/VINASIG/favicon-forge">
+        View source <ArrowUpRight size={18} aria-hidden="true" />
+      </a>
+    </header>
     <main class="page-shell">
       <section class="intro" aria-labelledby="page-title">
         <h1 id="page-title">Generate favicons</h1>
         <p>Drop one logo. Download the complete package.</p>
       </section>
 
-      <section class="workspace" aria-label="Favicon generator">
-        <div class="drop-zone" id="drop-zone" role="button" tabindex="0" aria-label="Choose or drop a logo">
-          <input id="file-input" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" hidden />
-          <div class="drop-icon" aria-hidden="true">
-            <svg viewBox="0 0 32 32" fill="none">
-              <path d="M16 22V5m0 0-6 6m6-6 6 6M7 19v6h18v-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </div>
-          <div>
-            <div class="drop-title" id="drop-title">Drop or choose a logo</div>
-            <div class="drop-subtitle" id="drop-subtitle">PNG, JPG, WEBP or SVG · 512×512 or larger recommended</div>
-          </div>
-        </div>
+      <section class="workspace" id="generator" aria-label="Favicon generator">
+        <input id="file-input" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" aria-label="Logo image" hidden />
+        <button class="drop-zone" id="drop-zone" type="button" aria-label="Choose or drop a logo" aria-describedby="drop-subtitle">
+          <span class="drop-icon" aria-hidden="true"><Upload size={24} /></span>
+          <span class="drop-copy">
+            <span class="drop-title" id="drop-title">Drop or choose a logo</span>
+            <span class="drop-subtitle" id="drop-subtitle">PNG, JPG, WebP or SVG. Up to 10 MB.<br />512 × 512 or larger recommended.</span>
+          </span>
+        </button>
+
+        <p class="privacy-note"><ShieldCheck size={18} aria-hidden="true" />Your image stays in your browser.</p>
 
         <p class="error-message" id="error-message" role="alert" hidden></p>
 
@@ -50,7 +70,7 @@ const basePath = import.meta.env.BASE_URL.endsWith('/')
 
           <div class="preview-layout">
             <div class="source-preview">
-              <div class="preview-label">SOURCE LOGO</div>
+              <div class="preview-label">Source logo</div>
               <div class="source-frame checkerboard">
                 <img class="pixelated" id="source-preview" alt="Selected logo" />
               </div>
@@ -58,7 +78,7 @@ const basePath = import.meta.env.BASE_URL.endsWith('/')
             </div>
 
             <div class="generated-previews">
-              <div class="preview-label">OUTPUT SIZES</div>
+              <div class="preview-label">Output sizes</div>
               <div class="output-surface checkerboard">
                 <div class="preview-grid pixel-mode" id="preview-grid"></div>
               </div>
@@ -66,8 +86,11 @@ const basePath = import.meta.env.BASE_URL.endsWith('/')
           </div>
 
           <button class="download-button" id="download-button" type="button">
-            Download favicon package <span aria-hidden="true">↓</span>
+            <span id="download-label">Download package</span>
+            <Download class="download-icon" size={20} aria-hidden="true" />
+            <span class="spinner" aria-hidden="true" hidden></span>
           </button>
+          <p class="package-note">Includes browser icons, app icons, a web manifest and setup instructions.</p>
         </div>
       </section>
     </main>
@@ -99,6 +122,9 @@ const basePath = import.meta.env.BASE_URL.endsWith('/')
       const fileMeta = $('#file-meta');
       const previewGrid = $('#preview-grid');
       const downloadButton = $('#download-button');
+      const downloadLabel = $('#download-label');
+      const downloadIcon = $('.download-icon');
+      const downloadSpinner = $('.spinner');
 
       let selectedFile = null;
       let loadedImage = null;
@@ -321,18 +347,23 @@ const basePath = import.meta.env.BASE_URL.endsWith('/')
           dropZone.classList.add('has-file');
           dropZone.setAttribute('aria-label', 'Choose or drop another logo');
           dropTitle.textContent = 'Drop or choose another logo';
-          dropSubtitle.textContent = 'PNG, JPG, WEBP or SVG · Drop a new file to replace the current logo';
+          dropSubtitle.textContent = 'PNG, JPG, WebP or SVG. Up to 10 MB. Choose a new file to replace this logo.';
         } catch (error) {
           selectedFile = null;
           loadedImage = null;
           sourceCanvas = null;
           sourceBounds = null;
+          resultPanel.hidden = true;
+          dropZone.classList.remove('has-file');
+          dropZone.setAttribute('aria-label', 'Choose or drop a logo');
+          dropTitle.textContent = 'Drop or choose a logo';
+          dropSubtitle.textContent = 'PNG, JPG, WebP or SVG. Up to 10 MB. 512 × 512 or larger recommended.';
           showError(error.message);
         }
       }
 
       function makeSnippet() {
-        return `<!-- Favicon Forge: copy this into your <head> -->
+        return `<!-- Generated with VINASIG Favicon Forge. Copy this into your <head>. -->
 <link rel="icon" href="./favicon-32x32.png" type="image/png" sizes="32x32">
 <link rel="icon" href="./favicon-16x16.png" type="image/png" sizes="16x16">
 <link rel="icon" href="./favicon.ico" type="image/x-icon">
@@ -359,7 +390,7 @@ const basePath = import.meta.env.BASE_URL.endsWith('/')
       }
 
       function makeReadme() {
-        return `FAVICON FORGE\n\nAstro / GitHub Pages\n\n1. Copy these files into your site's public/ folder (or next to index.html).\n2. Copy the contents of favicon-snippet.html into your page <head>.\n3. Build and deploy. The links use relative paths, so they work on GitHub Pages project sites.\n\nGenerated locally in your browser. The source logo was not uploaded.\n`;
+        return `VINASIG Favicon Forge\nhttps://github.com/VINASIG/favicon-forge\n\n1. Copy the icon files and site.webmanifest into your site's public folder, or next to index.html.\n2. Copy favicon-snippet.html into your page <head>. Adjust the paths if your page and icons are in different folders.\n3. Edit the site name, theme color and start URL in site.webmanifest for your website, then build and deploy.\n\nGenerated locally in your browser. The source logo was not uploaded.\n`;
       }
 
       async function buildZip() {
@@ -391,8 +422,12 @@ const basePath = import.meta.env.BASE_URL.endsWith('/')
       async function downloadPackage() {
         if (!selectedFile || !loadedImage) return;
         downloadButton.disabled = true;
+        dropZone.disabled = true;
+        downloadButton.setAttribute('aria-busy', 'true');
         downloadButton.classList.add('is-loading');
-        downloadButton.innerHTML = 'Packaging <span class="spinner" aria-hidden="true"></span>';
+        downloadLabel.textContent = 'Creating package';
+        downloadIcon.setAttribute('hidden', '');
+        downloadSpinner.hidden = false;
         try {
           const zipBlob = await buildZip();
           const url = URL.createObjectURL(zipBlob);
@@ -407,17 +442,18 @@ const basePath = import.meta.env.BASE_URL.endsWith('/')
           showError(`Could not create the ZIP file: ${error.message}`);
         } finally {
           downloadButton.disabled = false;
+          dropZone.disabled = false;
+          downloadButton.removeAttribute('aria-busy');
           downloadButton.classList.remove('is-loading');
-          downloadButton.innerHTML = 'Download favicon package <span aria-hidden="true">↓</span>';
+          downloadLabel.textContent = 'Download package';
+          downloadIcon.removeAttribute('hidden');
+          downloadSpinner.hidden = true;
         }
       }
 
-      dropZone.addEventListener('click', () => fileInput.click());
-      dropZone.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter' || event.key === ' ') {
-          event.preventDefault();
-          fileInput.click();
-        }
+      dropZone.addEventListener('click', () => {
+        fileInput.value = '';
+        fileInput.click();
       });
       fileInput.addEventListener('change', (event) => handleFile(event.target.files?.[0]));
       downloadButton.addEventListener('click', downloadPackage);
@@ -434,332 +470,9 @@ const basePath = import.meta.env.BASE_URL.endsWith('/')
           dropZone.classList.remove('is-dragging');
         });
       });
-      dropZone.addEventListener('drop', (event) => handleFile(event.dataTransfer.files?.[0]));
+      dropZone.addEventListener('drop', (event) => {
+        if (!dropZone.disabled) handleFile(event.dataTransfer.files?.[0]);
+      });
     </script>
   </body>
 </html>
-
-<style>
-  :global(*) { box-sizing: border-box; }
-  :global(html) {
-    background: #f3f9fe;
-    scroll-behavior: smooth;
-  }
-  :global(body) {
-    margin: 0;
-    color: #18334d;
-    background: #f3f9fe;
-    font-family: "Space Grotesk", sans-serif;
-    -webkit-font-smoothing: antialiased;
-  }
-  :global(button), :global(input), :global(code) { font: inherit; }
-  :global(button) { cursor: pointer; }
-
-  .page-shell {
-    width: min(960px, calc(100% - 32px));
-    margin: 0 auto;
-  }
-  @media (min-width: 721px) {
-    .page-shell { zoom: .9; }
-  }
-  .intro {
-    display: flex;
-    align-items: baseline;
-    flex-wrap: wrap;
-    gap: 10px;
-    padding: 14px 4px 22px;
-    animation: soft-reveal .7s cubic-bezier(.22, 1, .36, 1) both;
-  }
-  .intro h1,
-  .intro p {
-    margin: 0;
-    font-size: 20px;
-    line-height: 1.35;
-    letter-spacing: -.025em;
-  }
-  .intro h1 { font-weight: 700; }
-  .intro p { color: #6c8297; font-weight: 400; }
-
-  .workspace {
-    margin-bottom: 0;
-    padding: 24px;
-    border: 1px solid #cfe0ee;
-    border-radius: 16px;
-    background: #fff;
-    box-shadow: 0 18px 42px rgba(68, 112, 148, .08);
-    animation: soft-reveal .75s .06s cubic-bezier(.22, 1, .36, 1) both;
-    transition: border-color .3s ease, box-shadow .3s ease;
-  }
-  .drop-zone {
-    min-height: 180px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 16px;
-    border: 1px dashed #9fc7e5;
-    border-radius: 12px;
-    background: #f4faff;
-    text-align: center;
-    transition: border-color .3s ease, background .3s ease, box-shadow .3s ease, transform .3s cubic-bezier(.22, 1, .36, 1);
-  }
-  .drop-zone[hidden] { display: none; }
-  .drop-zone:hover,
-  .drop-zone.is-dragging {
-    border-color: #69a8d8;
-    background: #e9f5fe;
-    box-shadow: 0 10px 24px rgba(72, 135, 181, .1);
-  }
-  .drop-zone:hover { transform: translateY(-1px); }
-  .drop-zone.is-dragging { transform: scale(.995); }
-  .drop-icon {
-    width: 42px;
-    height: 42px;
-    display: grid;
-    place-items: center;
-    flex: 0 0 auto;
-    border-radius: 12px;
-    background: #dceefa;
-    color: #4b8fbe;
-    transition: transform .35s cubic-bezier(.22, 1, .36, 1), background .3s ease;
-  }
-  .drop-icon svg { width: 21px; }
-  .drop-zone:hover .drop-icon { transform: translateY(-2px) rotate(-2deg); }
-  .drop-title {
-    color: #244b6c;
-    font-size: 15px;
-    font-weight: 700;
-    letter-spacing: -.02em;
-    text-align: left;
-  }
-  .drop-subtitle {
-    margin-top: 4px;
-    color: #7890a4;
-    font-size: 12px;
-    text-align: left;
-  }
-  .error-message {
-    margin: 16px 0 0;
-    padding: 12px 14px;
-    border-radius: 9px;
-    background: #fff0ed;
-    color: #a5402a;
-    font-size: 13px;
-  }
-
-  .result-panel {
-    margin-top: 28px;
-    padding: 0;
-    animation: result-reveal .55s cubic-bezier(.22, 1, .36, 1) both;
-  }
-  .result-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 20px;
-  }
-  .result-header h2 {
-    margin: 0;
-    color: #18334d;
-    font-size: 20px;
-    letter-spacing: -.03em;
-  }
-  .preview-layout {
-    display: grid;
-    grid-template-columns: 256px minmax(0, 1fr);
-    gap: 24px;
-    margin-top: 22px;
-  }
-  .preview-label {
-    margin-bottom: 9px;
-    color: #69849a;
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: .16em;
-    text-transform: uppercase;
-  }
-  .source-frame,
-  .output-surface {
-    overflow: hidden;
-    border: 1px solid #cfe0ee;
-    border-radius: 12px;
-    transition: border-color .3s ease, box-shadow .3s ease;
-  }
-  .source-frame {
-    width: 256px;
-    height: 256px;
-    display: grid;
-    place-items: center;
-    animation: soft-reveal .55s .08s cubic-bezier(.22, 1, .36, 1) both;
-  }
-  .source-frame img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-  }
-  .source-frame img.pixelated,
-  :global(.preview-grid.pixel-mode .icon-frame img) {
-    image-rendering: crisp-edges;
-    image-rendering: pixelated;
-  }
-  .checkerboard {
-    background-color: #f8fcff;
-    background-image:
-      linear-gradient(45deg, #e5f1f9 25%, transparent 25%),
-      linear-gradient(-45deg, #e5f1f9 25%, transparent 25%),
-      linear-gradient(45deg, transparent 75%, #e5f1f9 75%),
-      linear-gradient(-45deg, transparent 75%, #e5f1f9 75%);
-    background-position: 0 0, 0 7px, 7px -7px, -7px 0;
-    background-size: 14px 14px;
-  }
-  .file-meta {
-    width: 256px;
-    margin-top: 10px;
-    overflow: hidden;
-    color: #7890a4;
-    font-size: 11px;
-    line-height: 1.5;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  .output-surface {
-    min-height: 256px;
-    padding: 12px;
-    animation: soft-reveal .55s .12s cubic-bezier(.22, 1, .36, 1) both;
-  }
-  .preview-grid {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 10px;
-  }
-  :global(.preview-card) {
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 7px;
-    padding: 8px 4px 7px;
-    color: #59778f;
-    font-size: 10px;
-    font-weight: 500;
-    animation: preview-reveal .5s cubic-bezier(.22, 1, .36, 1) both;
-    transition: transform .25s cubic-bezier(.22, 1, .36, 1);
-  }
-  :global(.preview-card:hover) {
-    transform: translateY(-2px);
-  }
-  :global(.preview-card:nth-child(1)) { animation-delay: .04s; }
-  :global(.preview-card:nth-child(2)) { animation-delay: .08s; }
-  :global(.preview-card:nth-child(3)) { animation-delay: .12s; }
-  :global(.preview-card:nth-child(4)) { animation-delay: .16s; }
-  :global(.preview-card:nth-child(5)) { animation-delay: .2s; }
-  :global(.preview-card:nth-child(6)) { animation-delay: .24s; }
-  :global(.icon-frame) {
-    width: 80px;
-    height: 80px;
-    display: grid;
-    place-items: center;
-    overflow: hidden;
-  }
-  :global(.icon-frame img) {
-    width: 80px;
-    height: 80px;
-    display: block;
-    object-fit: contain;
-  }
-
-  .download-button {
-    width: 100%;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 14px;
-    margin-top: 24px;
-    padding: 14px 18px;
-    border: 1px solid #679fca;
-    border-radius: 10px;
-    background: #72add7;
-    color: #fff;
-    font-size: 13px;
-    font-weight: 700;
-    box-shadow: 0 8px 20px rgba(72, 135, 181, .18);
-    transition: background .3s ease, border-color .3s ease, box-shadow .3s ease, transform .3s cubic-bezier(.22, 1, .36, 1);
-  }
-  .download-button:hover {
-    border-color: #4b8fbe;
-    background: #5c9dcd;
-    transform: translateY(-1px);
-  }
-  .download-button:disabled { cursor: wait; opacity: .7; }
-  .download-button:active { transform: translateY(1px) scale(.995); }
-  .download-button > span {
-    color: #eff9ff;
-    font-size: 18px;
-    line-height: 10px;
-  }
-  .spinner {
-    width: 13px;
-    height: 13px;
-    border: 2px solid rgba(255, 255, 255, .35);
-    border-top-color: #fff;
-    border-radius: 50%;
-    animation: spin .7s linear infinite;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  @keyframes soft-reveal {
-    from { opacity: 0; transform: translateY(8px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes result-reveal {
-    from { opacity: 0; transform: translateY(12px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes preview-reveal {
-    from { opacity: 0; transform: translateY(6px) scale(.98); }
-    to { opacity: 1; transform: translateY(0) scale(1); }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    :global(*),
-    :global(*::before),
-    :global(*::after) {
-      animation-duration: .01ms !important;
-      animation-iteration-count: 1 !important;
-      scroll-behavior: auto !important;
-      transition-duration: .01ms !important;
-    }
-  }
-
-  @media (max-width: 720px) {
-    .page-shell { width: calc(100% - 20px); }
-    .intro {
-      gap: 6px 8px;
-      padding: 28px 4px 18px;
-    }
-    .intro h1,
-    .intro p { font-size: 17px; }
-    .workspace { padding: 16px; }
-    .drop-zone {
-      min-height: 160px;
-      flex-direction: column;
-    }
-    .drop-title,
-    .drop-subtitle { text-align: center; }
-    .preview-layout {
-      grid-template-columns: 1fr;
-      gap: 22px;
-    }
-    .source-frame,
-    .file-meta { width: min(256px, 100%); }
-    .source-frame {
-      height: auto;
-      aspect-ratio: 1;
-    }
-    .output-surface { padding: 10px; }
-    .preview-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  }
-
-  @media (max-width: 390px) {
-    .result-header { align-items: flex-start; }
-    .preview-grid { grid-template-columns: 1fr; }
-  }
-</style>

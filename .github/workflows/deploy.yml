@@ -1,4 +1,4 @@
-name: Deploy Astro site to GitHub Pages
+name: Deploy VINASIG Favicon Forge to GitHub Pages
 
 on:
   push:
@@ -24,7 +24,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version-file: .node-version
           cache: npm
 
       - name: Install dependencies
@@ -35,16 +35,22 @@ jobs:
         shell: bash
         run: |
           repository="${GITHUB_REPOSITORY#*/}"
+          owner="${GITHUB_REPOSITORY_OWNER,,}"
+          echo "site_url=https://$owner.github.io" >> "$GITHUB_OUTPUT"
           if [[ "$repository" == *.github.io ]]; then
             echo "base_path=" >> "$GITHUB_OUTPUT"
           else
             echo "base_path=/$repository" >> "$GITHUB_OUTPUT"
           fi
 
+      - name: Check Astro source
+        run: npm run check
+
       - name: Build Astro site
         run: npm run build
         env:
           BASE_PATH: ${{ steps.site.outputs.base_path }}
+          SITE_URL: ${{ steps.site.outputs.site_url }}
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3

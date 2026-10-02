@@ -1,8 +1,22 @@
 {
-  "name": "favicon-forge",
+  "name": "@vinasig/favicon-forge",
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "description": "VINASIG's browser-only favicon package generator.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/VINASIG/favicon-forge.git"
+  },
+  "homepage": "https://vinasig.github.io/favicon-forge/",
+  "bugs": {
+    "url": "https://github.com/VINASIG/favicon-forge/issues"
+  },
+  "engines": {
+    "node": ">=22.12.0",
+    "npm": ">=9.6.5"
+  },
+  "packageManager": "npm@11.17.0",
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
@@ -10,6 +24,7 @@
     "check": "astro check"
   },
   "dependencies": {
+    "@lucide/astro": "1.48.0",
     "astro": "^7.3.3",
     "jszip": "^3.10.1"
   },
