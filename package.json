@@ -21,7 +21,8 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "check": "astro check"
+    "check": "astro check",
+    "test:responsive": "node scripts/check-responsive.mjs"
   },
   "dependencies": {
     "@lucide/astro": "1.48.0",
@@ -30,6 +31,7 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
+    "playwright": "1.63.0",
     "typescript": "^5.9.3"
   }
 }

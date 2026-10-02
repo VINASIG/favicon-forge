@@ -31,6 +31,17 @@ npm run preview
 
 The production build is written to `dist/`. Local inspection files belong in ignored `output/`.
 
+### Responsive checks
+
+Install the Chromium browser once, then run the focused browser checks:
+
+```sh
+npm exec -- playwright install chromium
+npm run test:responsive
+```
+
+The check builds the current source, starts its own local preview on an available port, and stops that preview when finished. It covers the five standard viewports, both sides of the 520 and 720 px breakpoints, intermediate widths, and text enlarged to 200%. Assertions check horizontal overflow, header text collisions, preview images and labels, loading controls, file selection and validation. Keep manual screenshot review alongside these checks. Failure screenshots and results are saved under `output/responsive/regression-*/`.
+
 ## GitHub Pages
 
 The workflow in [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) checks, builds and deploys every push to `main`. The Pages source must be **GitHub Actions**.

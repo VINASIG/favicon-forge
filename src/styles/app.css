@@ -42,6 +42,7 @@ button:focus-visible, a:focus-visible {
 .skip-link:focus { transform: translateY(0); }
 .site-header {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-4);
@@ -198,7 +199,14 @@ button:focus-visible, a:focus-visible {
   overflow-wrap: anywhere;
 }
 .output-surface { padding: var(--space-3); }
-.preview-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-3); }
+.preview-grid {
+  --preview-columns: 3;
+  display: grid;
+  gap: var(--space-3);
+  font-size: var(--font-size-small);
+  /* Keep the usual column count, but make room for the image and enlarged labels. */
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, max(80px, 8ch, calc((100% - (var(--preview-columns) - 1) * var(--space-3)) / var(--preview-columns)))), 1fr));
+}
 .preview-card {
   display: flex;
   flex-direction: column;
@@ -243,6 +251,7 @@ button:focus-visible, a:focus-visible {
   text-align: center;
 }
 .spinner {
+  flex-shrink: 0;
   width: 20px;
   height: 20px;
   border: 2px solid var(--color-info-border);
@@ -295,7 +304,6 @@ button:focus-visible, a:focus-visible {
 @media (max-width: 720px) {
   .preview-layout { grid-template-columns: 1fr; }
   .source-frame { max-width: 224px; }
-  .preview-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 @media (max-width: 520px) {
   .page-shell { width: calc(100% - 32px); }
@@ -311,7 +319,7 @@ button:focus-visible, a:focus-visible {
   .drop-title { font-size: var(--font-size-body); }
   .privacy-note { align-items: flex-start; }
   .privacy-note svg { margin-top: 1px; }
-  .preview-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .preview-grid { --preview-columns: 2; }
   .file-meta { max-width: 100%; }
 }
 @media (prefers-reduced-motion: reduce) {
