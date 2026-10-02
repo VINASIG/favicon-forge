@@ -1,0 +1,3 @@
+{
+  "extends": ["./.vinasig/standards/configs/stylelint.json"]
+}

@@ -8,43 +8,51 @@ Generate a complete favicon package from one logo. Choose or drop an image, revi
 
 ## Project context
 
-The application uses Astro for a static page, Canvas for local image processing, and JSZip for packaging. VINASIG's supplied logo exports, Space Grotesk font, identity colors and Lucide interface icons define the website's visual direction. See [the brand integration record](docs/BRAND.md) and [the project guide for SI agents](AGENTS.md).
+The application uses Astro for a static page, Canvas for local image processing, and JSZip for packaging. VINASIG's supplied logo exports, Space Grotesk font, identity colors and Lucide interface icons define the website's visual direction. See [the brand integration record](docs/BRAND.md), [the project guide for SI agents](AGENTS.md) and [the adopted shared standards](docs/STANDARDS.md).
 
 VINASIG uses **Super Intelligence (SI)** and **SI agents** in project-authored guidance. This is a naming convention. Preserve the original wording of external source titles, official names, quotations and technical identifiers.
 
 ## Local development
 
-Use Node 24 as recorded in `.node-version` and install the locked dependencies.
+Use Node **24.21.0** from `.node-version` and npm **12.2.0** from `packageManager`. [The toolchain record](docs/TOOLCHAIN.md) documents verified versions and compatibility choices. These commands use the pinned npm without changing a global installation:
 
 ```sh
-npm ci
-npm run dev
+npx --yes npm@12.2.0 ci --ignore-scripts
+npx --yes npm@12.2.0 run dev
 ```
 
-Open `http://localhost:4321/favicon-forge/`. The default base path matches the published project site.
+Open the URL printed by Astro. The default is `http://localhost:4321/favicon-forge/`; Astro may choose another port when that port is occupied. The base path matches the published project site.
 
 ```sh
-npm run check
-npm run build
-npm run preview
+npx --yes npm@12.2.0 run check
+npx --yes npm@12.2.0 test
+npx --yes npm@12.2.0 run build
+npx --yes npm@12.2.0 run preview
 ```
 
 The production build is written to `dist/`. Local inspection files belong in ignored `output/`.
 
-### Responsive checks
+`check` runs strict Astro/TypeScript checking, typed ESLint, Stylelint, formatting and the shared snapshot integrity gate. `build` validates generated HTML, public URLs and the ten preserved public assets. See [CONTRIBUTING.md](CONTRIBUTING.md) for the complete contributor workflow.
 
-Install the Chromium browser once, then run the focused browser checks:
+### Browser and responsive checks
+
+Install the project-pinned browser engines, then run the browser and responsive checks. On Linux, `--with-deps` installs the required browser libraries in an authorized development environment:
 
 ```sh
-npm exec -- playwright install chromium
-npm run test:responsive
+npx --yes npm@12.2.0 exec -- playwright install chromium firefox webkit
+npx --yes npm@12.2.0 run test:browser
+npx --yes npm@12.2.0 run test:responsive
 ```
 
-The check builds the current source, starts its own local preview on an available port, and stops that preview when finished. It covers the five standard viewports, both sides of the 520 and 720 px breakpoints, intermediate widths, and text enlarged to 200%. Assertions check horizontal overflow, header text collisions, preview images and labels, loading controls, file selection and validation. Keep manual screenshot review alongside these checks. Failure screenshots and results are saved under `output/responsive/regression-*/`.
+Each check builds the current source, starts its own preview on an available port, and stops that preview when finished. Browser flows cover Chromium, Firefox and WebKit at 390 × 844 and 1440 × 900, with normal/reduced motion, axe scans, touch/keyboard file selection, downloaded ZIP contents, maskable pixels, invalid images and out-of-order image decoding. Request observation checks that the logo stays local.
+
+For a scoped local diagnosis, `BROWSER_ENGINES=chromium,webkit` selects those engines and records Firefox as unrun in the report. The default always selects all three. CI rejects any selection that omits an engine, so a local environment blocker cannot turn into a narrower publication gate.
+
+The responsive check covers 120 states across the five standard viewports, 320 CSS px, both sides of the 520 and 720 px breakpoints, intermediate widths and text enlarged to 200%. Assertions check horizontal overflow, header text collisions, preview images and labels, loading controls, file selection and validation. Inspect full-page screenshots alongside these checks. Reports are saved in `output/checks/`, with images and packages in `output/responsive/flows-*/` and `output/responsive/regression-*/`. These checks use browser emulation; physical devices, screen readers and independent agent trials need separate evidence.
 
 ## GitHub Pages
 
-The workflow in [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) checks, builds and deploys every push to `main`. The Pages source must be **GitHub Actions**.
+The workflow in [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) runs source, unit, build and all browser/responsive gates on **Windows and Linux** for pull requests and pushes to `main`. It retains reports/screenshots for 14 days. Pages deploys only after both operating systems pass, on `main`; pull requests do not deploy. The Pages source must be **GitHub Actions**.
 
 The workflow derives `SITE_URL` from the current repository owner and `BASE_PATH` from the repository name. The VINASIG deployment uses `https://vinasig.github.io/favicon-forge/`. Asset paths, the local font and canonical metadata respect the deployment base path.
 
@@ -60,8 +68,10 @@ For a custom domain, set `SITE_URL` to its origin and `BASE_PATH` to an empty st
 - `site.webmanifest`.
 - `favicon-snippet.html` and `README.txt` setup instructions.
 
-The generated images come from the uploaded logo. The manifest derives its site name from the filename. Adjust its name, colors and start URL for the consuming website. VINASIG attribution appears in the setup instructions, without adding VINASIG artwork to generated icons.
+The generated images come from the uploaded logo. The maskable icon uses an opaque white background and keeps the logo inside its circular safe zone. The manifest derives its site name from the filename. Adjust its name, colors and start URL for the consuming website. VINASIG attribution appears in the setup instructions, without adding VINASIG artwork to generated icons. Input is limited to 10 MB and 16 million decoded pixels before canvas allocation.
 
 ## Licenses
 
 VINASIG logo artwork has no additional license granted by this repository. Space Grotesk's SIL Open Font License is included at [`public/fonts/OFL.txt`](public/fonts/OFL.txt). The published site also includes the existing [Lucide notices](public/licenses/lucide.txt) and [JSZip license text](public/licenses/jszip.txt). These files apply to their respective dependencies.
+
+Public access grants no new license for project source or brand artwork. See [LICENSE_STATUS.md](LICENSE_STATUS.md) for the separate rights records and [SECURITY.md](SECURITY.md) for private vulnerability reporting.

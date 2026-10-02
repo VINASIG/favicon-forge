@@ -1,0 +1,7 @@
+* text=auto eol=lf
+.agents/** -text
+.vinasig/** -text
+public/brand/** -text
+public/favicon.svg -text
+public/fonts/** -text
+public/licenses/** -text

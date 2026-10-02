@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "description": "VINASIG's browser-only favicon package generator.",
+  "license": "UNLICENSED",
   "repository": {
     "type": "git",
     "url": "https://github.com/VINASIG/favicon-forge.git"
@@ -13,25 +14,44 @@
     "url": "https://github.com/VINASIG/favicon-forge/issues"
   },
   "engines": {
-    "node": ">=22.12.0",
-    "npm": ">=9.6.5"
+    "node": ">=24.21.0 <25",
+    "npm": "12.2.0"
   },
-  "packageManager": "npm@11.17.0",
+  "packageManager": "npm@12.2.0",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "astro build && npm run check:built",
     "preview": "astro preview",
-    "check": "astro check",
+    "typecheck": "astro check --minimumFailingSeverity warning",
+    "lint": "eslint src scripts tests *.mjs --max-warnings 0",
+    "lint:css": "stylelint \"src/styles/**/*.css\" \"public/fonts/font.css\" --max-warnings 0",
+    "format:check": "prettier --check .",
+    "check:standards": "node scripts/check-standards.ts",
+    "check:built": "node scripts/check-built.ts",
+    "check": "npm run typecheck && npm run lint && npm run lint:css && npm run format:check && npm run check:standards",
+    "test": "node --test tests/*.test.ts",
+    "test:browser": "node tests/browser.ts",
     "test:responsive": "node scripts/check-responsive.mjs"
   },
   "dependencies": {
-    "@lucide/astro": "1.48.0",
-    "astro": "^7.3.3",
-    "jszip": "^3.10.1"
+    "@lucide/astro": "1.50.0",
+    "astro": "7.3.5",
+    "jszip": "3.10.2"
   },
   "devDependencies": {
-    "@astrojs/check": "^0.9.10",
+    "@astrojs/check": "0.9.10",
+    "@axe-core/playwright": "4.13.0",
+    "@eslint/js": "10.0.1",
+    "@types/node": "24.19.1",
+    "eslint": "10.11.0",
+    "eslint-plugin-astro": "3.2.1",
+    "html-validate": "11.16.1",
     "playwright": "1.63.0",
-    "typescript": "^5.9.3"
+    "prettier": "3.9.9",
+    "prettier-plugin-astro": "1.1.0",
+    "stylelint": "17.16.0",
+    "stylelint-config-standard": "40.0.0",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.71.0"
   }
 }

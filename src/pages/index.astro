@@ -2,12 +2,24 @@
 import { ArrowUpRight, Download, ShieldCheck, Upload } from '@lucide/astro';
 import '../styles/tokens.css';
 import '../styles/app.css';
+import { publicPage } from '../lib/site.ts';
 
 const basePath = import.meta.env.BASE_URL.endsWith('/')
   ? import.meta.env.BASE_URL
   : `${import.meta.env.BASE_URL}/`;
-const canonicalURL = new URL(basePath, Astro.site);
-const description = 'Generate a complete favicon package from your logo with VINASIG Favicon Forge. Your image stays in your browser.';
+const canonicalURL = publicPage(Astro.site, basePath);
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'VINASIG Favicon Forge',
+  url: canonicalURL.href,
+  applicationCategory: 'DeveloperApplication',
+  operatingSystem: 'Any',
+  isAccessibleForFree: true,
+  browserRequirements: 'Requires JavaScript and Canvas support.',
+};
+const description =
+  'Generate a complete favicon package from your logo with VINASIG Favicon Forge. Your image stays in your browser.';
 ---
 
 <!doctype html>
@@ -22,20 +34,64 @@ const description = 'Generate a complete favicon package from your logo with VIN
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonicalURL} />
     <link rel="canonical" href={canonicalURL} />
-    <link rel="preload" href={`${basePath}fonts/SpaceGrotesk-VariableFont_wght.ttf`} as="font" type="font/ttf" crossorigin />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="VINASIG Favicon Forge" />
+    <meta name="twitter:description" content={description} />
+    <link
+      rel="sitemap"
+      type="application/xml"
+      href={`${basePath}sitemap.xml`}
+    />
+    <script
+      type="application/ld+json"
+      set:html={JSON.stringify(structuredData).replace(/</g, '\\u003c')}
+    />
+    <link
+      rel="preload"
+      href={`${basePath}fonts/SpaceGrotesk-VariableFont_wght.ttf`}
+      as="font"
+      type="font/ttf"
+      crossorigin
+    />
     <link rel="stylesheet" href={`${basePath}fonts/font.css`} />
     <link rel="icon" href={`${basePath}favicon.svg`} type="image/svg+xml" />
-    <link rel="icon" href={`${basePath}brand/favicon-16.png`} type="image/png" sizes="16x16" />
-    <link rel="icon" href={`${basePath}brand/favicon-32.png`} type="image/png" sizes="32x32" />
-    <link rel="icon" href={`${basePath}brand/favicon-48.png`} type="image/png" sizes="48x48" />
+    <link
+      rel="icon"
+      href={`${basePath}brand/favicon-16.png`}
+      type="image/png"
+      sizes="16x16"
+    />
+    <link
+      rel="icon"
+      href={`${basePath}brand/favicon-32.png`}
+      type="image/png"
+      sizes="32x32"
+    />
+    <link
+      rel="icon"
+      href={`${basePath}brand/favicon-48.png`}
+      type="image/png"
+      sizes="48x48"
+    />
     <title>VINASIG Favicon Forge - Generate favicons from your logo</title>
   </head>
   <body>
-    <a class="skip-link" href="#generator">Skip to generator</a>
+    <a class="skip-link" href="#generator">
+      Skip to generator
+    </a>
     <header class="site-header page-shell">
       <div class="brand">
-        <a class="brand-link" href="https://github.com/VINASIG" aria-label="VINASIG on GitHub">
-          <img src={`${basePath}brand/primary-color.svg`} width="162" height="42" alt="VINASIG" />
+        <a
+          class="brand-link"
+          href="https://github.com/VINASIG"
+          aria-label="VINASIG on GitHub"
+        >
+          <img
+            src={`${basePath}brand/primary-color.svg`}
+            width="162"
+            height="42"
+            alt="VINASIG"
+          />
         </a>
         <span class="product-name">Favicon Forge</span>
       </div>
@@ -50,16 +106,39 @@ const description = 'Generate a complete favicon package from your logo with VIN
       </section>
 
       <section class="workspace" id="generator" aria-label="Favicon generator">
-        <input id="file-input" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" aria-label="Logo image" hidden />
-        <button class="drop-zone" id="drop-zone" type="button" aria-label="Choose or drop a logo" aria-describedby="drop-subtitle">
-          <span class="drop-icon" aria-hidden="true"><Upload size={24} /></span>
+        <input
+          id="file-input"
+          type="file"
+          accept="image/png,image/jpeg,image/webp,image/svg+xml"
+          aria-label="Logo image"
+          hidden
+        />
+        <button
+          class="drop-zone"
+          id="drop-zone"
+          type="button"
+          aria-label="Choose or drop a logo"
+          aria-describedby="drop-subtitle"
+        >
+          <span class="drop-icon" aria-hidden="true">
+            <Upload size={24} />
+          </span>
           <span class="drop-copy">
-            <span class="drop-title" id="drop-title">Drop or choose a logo</span>
-            <span class="drop-subtitle" id="drop-subtitle">PNG, JPG, WebP or SVG. Up to 10 MB.<br />512 × 512 or larger recommended.</span>
+            <span class="drop-title" id="drop-title">
+              Drop or choose a logo
+            </span>
+            <span class="drop-subtitle" id="drop-subtitle">
+              PNG, JPG, WebP or SVG. Up to 10 MB.
+              <br />
+              512 × 512 or larger recommended.
+            </span>
           </span>
         </button>
 
-        <p class="privacy-note"><ShieldCheck size={18} aria-hidden="true" />Your image stays in your browser.</p>
+        <p class="privacy-note">
+          <ShieldCheck size={18} aria-hidden="true" />
+          Your image stays in your browser.
+        </p>
 
         <p class="error-message" id="error-message" role="alert" hidden></p>
 
@@ -72,7 +151,12 @@ const description = 'Generate a complete favicon package from your logo with VIN
             <div class="source-preview">
               <div class="preview-label">Source logo</div>
               <div class="source-frame checkerboard">
-                <img class="pixelated" id="source-preview" alt="Selected logo" />
+                <img
+                  class="pixelated"
+                  id="source-preview"
+                  src="data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20width=%221%22%20height=%221%22/%3E"
+                  alt="Selected logo"
+                />
               </div>
               <div class="file-meta" id="file-meta"></div>
             </div>
@@ -90,389 +174,22 @@ const description = 'Generate a complete favicon package from your logo with VIN
             <Download class="download-icon" size={20} aria-hidden="true" />
             <span class="spinner" aria-hidden="true" hidden></span>
           </button>
-          <p class="package-note">Includes browser icons, app icons, a web manifest and setup instructions.</p>
+          <p class="package-note">
+            Includes browser icons, app icons, a web manifest and setup
+            instructions.
+          </p>
         </div>
       </section>
     </main>
+    <noscript>
+      <p class="page-shell">
+        JavaScript is required to create a favicon package locally. Enable
+        JavaScript to use the generator.
+      </p>
+    </noscript>
 
     <script>
-      // @ts-nocheck - this small client-only module works directly with DOM and Canvas APIs.
-      import JSZip from 'jszip';
-
-      const MAX_FILE_SIZE = 10 * 1024 * 1024;
-      const OUTPUT_SIZES = [16, 32, 48, 180, 192, 512];
-      const PREVIEW_SIZES = [16, 32, 48, 180, 192, 512];
-      const PREVIEW_DISPLAY_SIZES = {
-        16: 80,
-        32: 80,
-        48: 80,
-        180: 80,
-        192: 80,
-        512: 80,
-      };
-      const $ = (selector) => document.querySelector(selector);
-
-      const dropZone = $('#drop-zone');
-      const fileInput = $('#file-input');
-      const dropTitle = $('#drop-title');
-      const dropSubtitle = $('#drop-subtitle');
-      const errorMessage = $('#error-message');
-      const resultPanel = $('#result-panel');
-      const sourcePreview = $('#source-preview');
-      const fileMeta = $('#file-meta');
-      const previewGrid = $('#preview-grid');
-      const downloadButton = $('#download-button');
-      const downloadLabel = $('#download-label');
-      const downloadIcon = $('.download-icon');
-      const downloadSpinner = $('.spinner');
-
-      let selectedFile = null;
-      let loadedImage = null;
-      let sourceCanvas = null;
-      let sourceBounds = null;
-
-      function showError(message) {
-        errorMessage.textContent = message;
-        errorMessage.hidden = false;
-      }
-
-      function clearError() {
-        errorMessage.hidden = true;
-        errorMessage.textContent = '';
-      }
-
-      function formatBytes(bytes) {
-        if (bytes < 1024) return `${bytes} B`;
-        if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-        return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-      }
-
-      function fileNameToSiteName(fileName) {
-        const withoutExtension = fileName.replace(/\.[^/.]+$/, '');
-        const readable = withoutExtension.replace(/[-_]+/g, ' ').replace(/\s+/g, ' ').trim();
-        return readable || 'My Website';
-      }
-
-      function loadImage(file) {
-        return new Promise((resolve, reject) => {
-          const objectUrl = URL.createObjectURL(file);
-          const image = new Image();
-          image.onload = () => {
-            URL.revokeObjectURL(objectUrl);
-            resolve(image);
-          };
-          image.onerror = () => {
-            URL.revokeObjectURL(objectUrl);
-            reject(new Error('This image could not be read. Try another PNG, JPG, WEBP or SVG file.'));
-          };
-          image.src = objectUrl;
-        });
-      }
-
-      function rasterizeSource() {
-        const canvas = document.createElement('canvas');
-        canvas.width = loadedImage.naturalWidth;
-        canvas.height = loadedImage.naturalHeight;
-        const context = canvas.getContext('2d');
-        context.drawImage(loadedImage, 0, 0, canvas.width, canvas.height);
-        return canvas;
-      }
-
-      function detectSourceBounds() {
-        const width = loadedImage.naturalWidth;
-        const height = loadedImage.naturalHeight;
-        const context = sourceCanvas?.getContext('2d', { willReadFrequently: true });
-
-        if (!context || width * height > 16_000_000) {
-          return { x: 0, y: 0, width, height };
-        }
-
-        const pixels = context.getImageData(0, 0, width, height).data;
-        let left = width;
-        let top = height;
-        let right = -1;
-        let bottom = -1;
-
-        for (let y = 0; y < height; y += 1) {
-          for (let x = 0; x < width; x += 1) {
-            if (pixels[(y * width + x) * 4 + 3] > 8) {
-              left = Math.min(left, x);
-              top = Math.min(top, y);
-              right = Math.max(right, x);
-              bottom = Math.max(bottom, y);
-            }
-          }
-        }
-
-        if (right < left || bottom < top) {
-          return { x: 0, y: 0, width, height };
-        }
-
-        const contentWidth = right - left + 1;
-        const contentHeight = bottom - top + 1;
-        const margin = Math.max(2, Math.round(Math.max(contentWidth, contentHeight) * 0.08));
-        const x = Math.max(0, left - margin);
-        const y = Math.max(0, top - margin);
-        const maxX = Math.min(width, right + margin + 1);
-        const maxY = Math.min(height, bottom + margin + 1);
-
-        return { x, y, width: maxX - x, height: maxY - y };
-      }
-
-      function createIconCanvas(size) {
-        const canvas = document.createElement('canvas');
-        canvas.width = size;
-        canvas.height = size;
-        const context = canvas.getContext('2d');
-        context.clearRect(0, 0, size, size);
-        context.imageSmoothingEnabled = false;
-
-        const source = sourceCanvas || loadedImage;
-        const bounds = sourceBounds || {
-          x: 0,
-          y: 0,
-          width: loadedImage.naturalWidth,
-          height: loadedImage.naturalHeight,
-        };
-        const scale = Math.min(size / bounds.width, size / bounds.height);
-        let width = bounds.width * scale;
-        let height = bounds.height * scale;
-        let x = (size - width) / 2;
-        let y = (size - height) / 2;
-
-        width = Math.max(1, Math.round(width));
-        height = Math.max(1, Math.round(height));
-        x = Math.floor((size - width) / 2);
-        y = Math.floor((size - height) / 2);
-
-        context.drawImage(source, bounds.x, bounds.y, bounds.width, bounds.height, x, y, width, height);
-        return canvas;
-      }
-
-      function canvasToBlob(canvas) {
-        return new Promise((resolve, reject) => {
-          canvas.toBlob((blob) => blob ? resolve(blob) : reject(new Error('Could not create a PNG.')), 'image/png');
-        });
-      }
-
-      function createPreviewImage(size) {
-        const outputCanvas = createIconCanvas(size);
-        const displaySize = PREVIEW_DISPLAY_SIZES[size];
-        const previewCanvas = document.createElement('canvas');
-        previewCanvas.width = displaySize;
-        previewCanvas.height = displaySize;
-        const context = previewCanvas.getContext('2d');
-        context.imageSmoothingEnabled = false;
-        const previewScale = displaySize / size;
-        context.setTransform(previewScale, 0, 0, previewScale, 0, 0);
-        context.drawImage(outputCanvas, 0, 0);
-        const previewImage = document.createElement('img');
-        previewImage.src = previewCanvas.toDataURL('image/png');
-        previewImage.width = displaySize;
-        previewImage.height = displaySize;
-        return previewImage;
-      }
-
-      function createIco(entries) {
-        const headerSize = 6;
-        const directoryEntrySize = 16;
-        const dataOffset = headerSize + directoryEntrySize * entries.length;
-        const totalSize = dataOffset + entries.reduce((sum, entry) => sum + entry.bytes.length, 0);
-        const buffer = new ArrayBuffer(totalSize);
-        const view = new DataView(buffer);
-        const bytes = new Uint8Array(buffer);
-
-        view.setUint16(0, 0, true);
-        view.setUint16(2, 1, true);
-        view.setUint16(4, entries.length, true);
-
-        let offset = dataOffset;
-        entries.forEach((entry, index) => {
-          const directoryOffset = headerSize + index * directoryEntrySize;
-          view.setUint8(directoryOffset, entry.size === 256 ? 0 : entry.size);
-          view.setUint8(directoryOffset + 1, entry.size === 256 ? 0 : entry.size);
-          view.setUint8(directoryOffset + 2, 0);
-          view.setUint8(directoryOffset + 3, 0);
-          view.setUint16(directoryOffset + 4, 1, true);
-          view.setUint16(directoryOffset + 6, 32, true);
-          view.setUint32(directoryOffset + 8, entry.bytes.length, true);
-          view.setUint32(directoryOffset + 12, offset, true);
-          bytes.set(entry.bytes, offset);
-          offset += entry.bytes.length;
-        });
-
-        return new Blob([buffer], { type: 'image/x-icon' });
-      }
-
-      function renderPreviews() {
-        previewGrid.replaceChildren();
-        PREVIEW_SIZES.forEach((size) => {
-          const card = document.createElement('div');
-          card.className = 'preview-card';
-          const label = document.createElement('span');
-          label.textContent = `${size}×${size}`;
-          const frame = document.createElement('div');
-          frame.className = `icon-frame size-${size}`;
-          // Preview the exact generated PNG while keeping every card the same size.
-          const image = createPreviewImage(size);
-          image.alt = `Preview favicon ${size}x${size}`;
-          frame.append(image);
-          card.append(frame, label);
-          previewGrid.append(card);
-        });
-      }
-
-      async function handleFile(file) {
-        clearError();
-        if (!file) return;
-        if (!file.type.startsWith('image/')) {
-          showError('Please choose an image file.');
-          return;
-        }
-        if (file.size > MAX_FILE_SIZE) {
-          showError('That file is too large. Please choose an image smaller than 10 MB.');
-          return;
-        }
-
-        try {
-          selectedFile = file;
-          loadedImage = await loadImage(file);
-          sourceCanvas = rasterizeSource();
-          sourceBounds = detectSourceBounds();
-          sourcePreview.src = createIconCanvas(256).toDataURL('image/png');
-          sourcePreview.alt = `Logo ${file.name}`;
-          fileMeta.textContent = `${file.name} · ${loadedImage.naturalWidth}×${loadedImage.naturalHeight} · ${formatBytes(file.size)}`;
-          renderPreviews();
-          resultPanel.hidden = false;
-          dropZone.classList.add('has-file');
-          dropZone.setAttribute('aria-label', 'Choose or drop another logo');
-          dropTitle.textContent = 'Drop or choose another logo';
-          dropSubtitle.textContent = 'PNG, JPG, WebP or SVG. Up to 10 MB. Choose a new file to replace this logo.';
-        } catch (error) {
-          selectedFile = null;
-          loadedImage = null;
-          sourceCanvas = null;
-          sourceBounds = null;
-          resultPanel.hidden = true;
-          dropZone.classList.remove('has-file');
-          dropZone.setAttribute('aria-label', 'Choose or drop a logo');
-          dropTitle.textContent = 'Drop or choose a logo';
-          dropSubtitle.textContent = 'PNG, JPG, WebP or SVG. Up to 10 MB. 512 × 512 or larger recommended.';
-          showError(error.message);
-        }
-      }
-
-      function makeSnippet() {
-        return `<!-- Generated with VINASIG Favicon Forge. Copy this into your <head>. -->
-<link rel="icon" href="./favicon-32x32.png" type="image/png" sizes="32x32">
-<link rel="icon" href="./favicon-16x16.png" type="image/png" sizes="16x16">
-<link rel="icon" href="./favicon.ico" type="image/x-icon">
-<link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
-<link rel="manifest" href="./site.webmanifest">
-<meta name="theme-color" content="#ffffff">`;
-      }
-
-      function makeManifest(siteName) {
-        return JSON.stringify({
-          name: siteName,
-          short_name: siteName.slice(0, 20),
-          start_url: './',
-          scope: './',
-          display: 'standalone',
-          theme_color: '#ffffff',
-          background_color: '#ffffff',
-          icons: [
-            { src: './android-chrome-192x192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
-            { src: './android-chrome-512x512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
-            { src: './android-chrome-512x512-maskable.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' }
-          ]
-        }, null, 2);
-      }
-
-      function makeReadme() {
-        return `VINASIG Favicon Forge\nhttps://github.com/VINASIG/favicon-forge\n\n1. Copy the icon files and site.webmanifest into your site's public folder, or next to index.html.\n2. Copy favicon-snippet.html into your page <head>. Adjust the paths if your page and icons are in different folders.\n3. Edit the site name, theme color and start URL in site.webmanifest for your website, then build and deploy.\n\nGenerated locally in your browser. The source logo was not uploaded.\n`;
-      }
-
-      async function buildZip() {
-        const sizes = new Map();
-        for (const size of OUTPUT_SIZES) {
-          sizes.set(size, await canvasToBlob(createIconCanvas(size)));
-        }
-
-        const icoEntries = [];
-        for (const size of [16, 32, 48]) {
-          icoEntries.push({ size, bytes: new Uint8Array(await sizes.get(size).arrayBuffer()) });
-        }
-
-        const siteName = fileNameToSiteName(selectedFile?.name || 'My Website');
-        const zip = new JSZip();
-        zip.file('favicon.ico', createIco(icoEntries));
-        zip.file('favicon-16x16.png', sizes.get(16));
-        zip.file('favicon-32x32.png', sizes.get(32));
-        zip.file('apple-touch-icon.png', sizes.get(180));
-        zip.file('android-chrome-192x192.png', sizes.get(192));
-        zip.file('android-chrome-512x512.png', sizes.get(512));
-        zip.file('android-chrome-512x512-maskable.png', sizes.get(512));
-        zip.file('site.webmanifest', makeManifest(siteName));
-        zip.file('favicon-snippet.html', makeSnippet());
-        zip.file('README.txt', makeReadme());
-        return zip.generateAsync({ type: 'blob', compression: 'DEFLATE', compressionOptions: { level: 6 } });
-      }
-
-      async function downloadPackage() {
-        if (!selectedFile || !loadedImage) return;
-        downloadButton.disabled = true;
-        dropZone.disabled = true;
-        downloadButton.setAttribute('aria-busy', 'true');
-        downloadButton.classList.add('is-loading');
-        downloadLabel.textContent = 'Creating package';
-        downloadIcon.setAttribute('hidden', '');
-        downloadSpinner.hidden = false;
-        try {
-          const zipBlob = await buildZip();
-          const url = URL.createObjectURL(zipBlob);
-          const anchor = document.createElement('a');
-          anchor.href = url;
-          anchor.download = 'favicon-package.zip';
-          document.body.append(anchor);
-          anchor.click();
-          anchor.remove();
-          URL.revokeObjectURL(url);
-        } catch (error) {
-          showError(`Could not create the ZIP file: ${error.message}`);
-        } finally {
-          downloadButton.disabled = false;
-          dropZone.disabled = false;
-          downloadButton.removeAttribute('aria-busy');
-          downloadButton.classList.remove('is-loading');
-          downloadLabel.textContent = 'Download package';
-          downloadIcon.removeAttribute('hidden');
-          downloadSpinner.hidden = true;
-        }
-      }
-
-      dropZone.addEventListener('click', () => {
-        fileInput.value = '';
-        fileInput.click();
-      });
-      fileInput.addEventListener('change', (event) => handleFile(event.target.files?.[0]));
-      downloadButton.addEventListener('click', downloadPackage);
-
-      ['dragenter', 'dragover'].forEach((eventName) => {
-        dropZone.addEventListener(eventName, (event) => {
-          event.preventDefault();
-          dropZone.classList.add('is-dragging');
-        });
-      });
-      ['dragleave', 'drop'].forEach((eventName) => {
-        dropZone.addEventListener(eventName, (event) => {
-          event.preventDefault();
-          dropZone.classList.remove('is-dragging');
-        });
-      });
-      dropZone.addEventListener('drop', (event) => {
-        if (!dropZone.disabled) handleFile(event.dataTransfer.files?.[0]);
-      });
+      import '../scripts/generator.ts';
     </script>
   </body>
 </html>

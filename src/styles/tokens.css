@@ -1,8 +1,8 @@
 :root {
   color-scheme: light;
-  font-family: "Space Grotesk", sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
   font-synthesis: none;
-  text-rendering: optimizeLegibility;
+  text-rendering: optimizelegibility;
 
   /* Keep these identity anchors unchanged. */
   --color-scout-blue: #21497b;
@@ -10,8 +10,8 @@
   --color-builder-green: #47a036;
   --color-auditor-red: #971607;
   --color-core-graphite: #443a3b;
-  --color-black: #000000;
-  --color-white: #ffffff;
+  --color-black: #000;
+  --color-white: #fff;
 
   /* Optional palette extensions. Keep identity matches as aliases. */
   --color-palette-citron: #ddd605;
@@ -27,7 +27,7 @@
   --color-palette-violet: #9a5cc6;
   --color-palette-tangerine: var(--color-thinker-orange);
   --color-palette-sky: #8bb3ff;
-  --color-palette-amber: #ffaa00;
+  --color-palette-amber: #fa0;
 
   /* Optional deep tones are palette references, not default UI shadows. */
   --color-palette-citron-shade: #373501;
@@ -78,9 +78,8 @@
   --color-error-accent: var(--color-auditor-red);
   --color-error-background: var(--color-auditor-red-soft);
   --color-error-border: var(--color-auditor-red-border);
-
   --color-canvas: #f7f6f4;
-  --color-surface: #ffffff;
+  --color-surface: #fff;
   --color-surface-inverse: #292526;
   --color-surface-muted: #f1efed;
   --color-surface-hover: #f2edeb;
@@ -91,14 +90,12 @@
   --color-border: #e1dedd;
   --color-border-strong: #bfb7b5;
   --color-focus: var(--color-scout-blue);
-
   --font-size-small: 0.875rem;
   --font-size-body: 1rem;
   --font-size-lead: 1.0625rem;
   --font-size-heading-small: 1.125rem;
   --font-size-heading: 1.5rem;
   --font-size-title: 2.75rem;
-
   --space-1: 0.25rem;
   --space-2: 0.5rem;
   --space-3: 0.75rem;
@@ -107,7 +104,6 @@
   --space-8: 2rem;
   --space-12: 3rem;
   --space-16: 4rem;
-
   --radius-sm: 0.5rem;
   --radius-md: 0.875rem;
   --radius-lg: 1.25rem;

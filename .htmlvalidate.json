@@ -1,0 +1,4 @@
+{
+  "root": true,
+  "extends": ["./.vinasig/standards/configs/htmlvalidate.json"]
+}

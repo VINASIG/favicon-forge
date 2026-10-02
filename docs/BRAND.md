@@ -12,15 +12,15 @@ This integration selects the shared design system's Bright Playful Minimalism di
 
 The copied website assets come from [`VINASIG/web-design-system`](https://github.com/VINASIG/web-design-system/tree/eade1ba182810bb3ae72e3fc6a314ce3ac0af7e2), using its 2 October 2026 snapshot. That repository records its logo exports as byte-for-byte copies from [`VINASIG/vinasig-brand-assets`](https://github.com/VINASIG/vinasig-brand-assets). Editable artwork stays in the brand archive.
 
-| Local asset | Design-system source |
-| --- | --- |
-| `public/brand/primary-color.svg` | `public/brand/lockups/primary-color.svg` |
-| `public/favicon.svg` | `public/brand/marks/primary-mark.svg` |
-| `public/brand/favicon-16.png` | `public/brand/favicons/favicon-16.png` |
-| `public/brand/favicon-32.png` | `public/brand/favicons/favicon-32.png` |
-| `public/brand/favicon-48.png` | `public/brand/favicons/favicon-48.png` |
+| Local asset                                       | Design-system source                              |
+| ------------------------------------------------- | ------------------------------------------------- |
+| `public/brand/primary-color.svg`                  | `public/brand/lockups/primary-color.svg`          |
+| `public/favicon.svg`                              | `public/brand/marks/primary-mark.svg`             |
+| `public/brand/favicon-16.png`                     | `public/brand/favicons/favicon-16.png`            |
+| `public/brand/favicon-32.png`                     | `public/brand/favicons/favicon-32.png`            |
+| `public/brand/favicon-48.png`                     | `public/brand/favicons/favicon-48.png`            |
 | `public/fonts/SpaceGrotesk-VariableFont_wght.ttf` | `public/fonts/SpaceGrotesk-VariableFont_wght.ttf` |
-| `public/fonts/OFL.txt` | `public/fonts/OFL.txt` |
+| `public/fonts/OFL.txt`                            | `public/fonts/OFL.txt`                            |
 
 SHA-256 hashes of all seven copied files matched their source files at integration time. The SVGs and PNGs are unchanged. The font is served locally with its existing license.
 

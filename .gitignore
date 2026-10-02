@@ -3,3 +3,6 @@ dist/
 .astro/
 output/
 *.log
+.vinasig/backups/
+.vinasig/install.lock
+*.tsbuildinfo
