@@ -4,7 +4,7 @@ Integration date: 2 October 2026.
 
 ## Project decision
 
-The owner requested transferring Favicon Forge from `NhanAZ-Web` to VINASIG and adapting the project to VINASIG. The product remains Favicon Forge. Its website title is "VINASIG Favicon Forge", and its maintainer, repository links and deployment address identify VINASIG.
+Favicon Forge is a VINASIG project. Its website title is "VINASIG Favicon Forge", and its maintainer, repository links and deployment address identify VINASIG.
 
 This integration selects the shared design system's Bright Playful Minimalism direction for this application. It does not change the draft status of other design-system proposals.
 
@@ -36,8 +36,6 @@ When updating these tokens, compare with the shared source, preserve identity va
 
 Branding applies to the generator's interface and setup attribution. Generated icons use the user's own logo. Manifest names come from the uploaded filename. The default output colors remain neutral and can be edited for the user's website.
 
-## Ownership and licensing records
+## Licenses
 
-GitHub confirmed the transfer to `VINASIG/favicon-forge` on 2 October 2026. Repository ID `1374831183` is unchanged. The original 23 commits remain in its history, including the former `main` tip `8b8c4c9c7954a2dd035790a833fe257d9ae69a5e`. The default branch remains `main`, and visibility remains public.
-
-The transfer does not erase author credits or introduce a new software or artwork license. The font's OFL file and dependency license records remain applicable. Existing Lucide and JSZip license texts are also copied into `public/licenses/` for the published site.
+The font's OFL file and dependency license records remain applicable. Existing Lucide and JSZip license texts are also copied into `public/licenses/` for the published site.

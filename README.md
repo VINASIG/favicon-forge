@@ -6,9 +6,7 @@ Generate a complete favicon package from one logo. Choose or drop an image, revi
 - [Source repository](https://github.com/VINASIG/favicon-forge)
 - [VINASIG](https://github.com/VINASIG)
 
-## Ownership and project context
-
-Favicon Forge originated in `NhanAZ-Web/favicon-forge` and was transferred to VINASIG on 2 October 2026. The repository transfer keeps the project's existing Git history and original author credits. The product name and repository slug remain Favicon Forge and `favicon-forge`.
+## Project context
 
 The application uses Astro for a static page, Canvas for local image processing, and JSZip for packaging. VINASIG's supplied logo exports, Space Grotesk font, identity colors and Lucide interface icons define the website's visual direction. See [the brand integration record](docs/BRAND.md) and [the project guide for SI agents](AGENTS.md).
 
@@ -39,7 +37,7 @@ The workflow in [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) c
 
 The workflow derives `SITE_URL` from the current repository owner and `BASE_PATH` from the repository name. The VINASIG deployment uses `https://vinasig.github.io/favicon-forge/`. Asset paths, the local font and canonical metadata respect the deployment base path.
 
-For a custom domain, set `SITE_URL` to its origin and `BASE_PATH` to an empty string before building. Keep preview configuration consistent with the build configuration. GitHub redirects the transferred repository URL, but it does not redirect the old GitHub Pages address. Update links that still point to `https://nhanaz-web.github.io/favicon-forge/`.
+For a custom domain, set `SITE_URL` to its origin and `BASE_PATH` to an empty string before building. Keep preview configuration consistent with the build configuration.
 
 ## Generated package
 
@@ -53,6 +51,6 @@ For a custom domain, set `SITE_URL` to its origin and `BASE_PATH` to an empty st
 
 The generated images come from the uploaded logo. The manifest derives its site name from the filename. Adjust its name, colors and start URL for the consuming website. VINASIG attribution appears in the setup instructions, without adding VINASIG artwork to generated icons.
 
-## Licenses and source records
+## Licenses
 
-The transfer does not introduce a new software license or replace existing author credits. VINASIG logo artwork has no additional license granted by this repository. Space Grotesk's SIL Open Font License is included at [`public/fonts/OFL.txt`](public/fonts/OFL.txt). The published site also includes the existing [Lucide notices](public/licenses/lucide.txt) and [JSZip license text](public/licenses/jszip.txt). These files apply to their respective dependencies.
+VINASIG logo artwork has no additional license granted by this repository. Space Grotesk's SIL Open Font License is included at [`public/fonts/OFL.txt`](public/fonts/OFL.txt). The published site also includes the existing [Lucide notices](public/licenses/lucide.txt) and [JSZip license text](public/licenses/jszip.txt). These files apply to their respective dependencies.

@@ -12,7 +12,7 @@ Use **Super Intelligence (SI)** and **SI agents** in new VINASIG-authored copy. 
 
 ## Interface direction
 
-This project adopts the VINASIG design system's Bright Playful Minimalism direction for its 2 October 2026 transfer. Use light neutral surfaces, restrained identity colors, clear typography and a focused workspace. This project decision does not approve all draft design-system rules for the entire organization.
+This project adopts the VINASIG design system's Bright Playful Minimalism direction. Use light neutral surfaces, restrained identity colors, clear typography and a focused workspace. This project decision does not approve all draft design-system rules for the entire organization.
 
 - Use `src/styles/tokens.css` for identity anchors and semantic interface colors. Read `docs/BRAND.md` before syncing tokens from the shared system.
 - Load Space Grotesk from `public/fonts/` with base-aware URLs. Keep its OFL file. Do not add a remote font service.
