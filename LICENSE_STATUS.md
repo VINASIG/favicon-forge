@@ -1,13 +1,5 @@
-# Rights and distribution
+# Current license status
 
-This repository is publicly readable. Package metadata is `UNLICENSED`; this standardization adds no general license grant for the project's source or VINASIG artwork.
+The owner selected AGPL-3.0-or-later for VINASIG-authored software and CC-BY-SA-4.0 for authored documentation on 4 October 2026. This replaces the earlier pending-license status.
 
-The supplied logo, favicon exports and Space Grotesk files retain their provenance in [the brand integration record](docs/BRAND.md). [The asset manifest](docs/asset-manifest.json) pins the ten existing public files to the pre-standardization commit. Source and built-asset checks preserve their bytes.
-
-- Space Grotesk uses the [SIL Open Font License](public/fonts/OFL.txt).
-- Lucide uses its [ISC notice](public/licenses/lucide.txt).
-- JSZip retains its [existing dual-license text](public/licenses/jszip.txt).
-
-The notices were compared with the selected dependency versions. They apply to their respective dependencies. Public visibility does not waive font terms, trademark rights or restrictions on VINASIG artwork.
-
-Generated icons derive from the user's own source logo. Their rights remain with their respective owners. The generator's setup attribution does not add VINASIG artwork or a VINASIG site name to that output.
+Read [LICENSE](LICENSE), [the material map](LICENSES.md), [VINASIG Brand Usage Policy](BRAND_POLICY.md) and [the dated review](docs/audits/licensing-2026-10-04.md). Fonts, dependency notices and official identity assets keep their separate terms. The npm package remains private to prevent accidental publication, while the source grant is open.

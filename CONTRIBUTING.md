@@ -21,3 +21,7 @@ Browser checks start a fresh production preview on an available port and stop on
 The marked `AGENTS.md` block, `.agents/skills/` and `.vinasig/standards/` are managed snapshot bytes. Update them through a reviewed standards bundle and installer. Local project configuration and [provenance](.vinasig/provenance.json) belong to this repository. See [the toolchain record](docs/TOOLCHAIN.md) before changing dependencies or CI actions.
 
 Submit sensitive findings through [private reporting](SECURITY.md). Use repository issues for public, non-sensitive product defects with reproduction steps and the affected commit.
+
+## Contribution licensing
+
+Read [LICENSES.md](LICENSES.md) before submitting material. New contributions use the applicable software, documentation or data scope unless a different compatible license is explicitly identified and accepted. Preserve authorship and third-party notices. Submit only material you have authority to license. This does not require a blanket copyright assignment or grant permission to redesign the official identity assets.

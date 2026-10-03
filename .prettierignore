@@ -6,3 +6,9 @@ output/
 .vinasig/
 AGENTS.md
 public/
+
+# Standard license texts are verbatim legal documents.
+LICENSE
+LICENSES/
+public/licenses/AGPL-3.0-or-later.txt
+public/licenses/CC-BY-SA-4.0.txt

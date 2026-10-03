@@ -74,6 +74,12 @@ The generated images come from the uploaded logo. The maskable icon uses an opaq
 
 ## Licenses
 
-VINASIG logo artwork has no additional license granted by this repository. Space Grotesk's SIL Open Font License is included at [`public/fonts/OFL.txt`](public/fonts/OFL.txt). The published site also includes the existing [Lucide notices](public/licenses/lucide.txt) and [JSZip license text](public/licenses/jszip.txt). These files apply to their respective dependencies.
+VINASIG-authored application code uses AGPL-3.0-or-later and authored documentation uses CC-BY-SA-4.0. Logo artwork follows [the separate brand policy](BRAND_POLICY.md). Space Grotesk's SIL Open Font License is included at [`public/fonts/OFL.txt`](public/fonts/OFL.txt). The published site includes the existing [Lucide notices](public/licenses/lucide.txt) and [JSZip license text](public/licenses/jszip.txt), unchanged for their respective dependencies.
 
-Public access grants no new license for project source or brand artwork. See [LICENSE_STATUS.md](LICENSE_STATUS.md) for the separate rights records and [SECURITY.md](SECURITY.md) for private vulnerability reporting.
+See [LICENSES.md](LICENSES.md) for the current grant and exclusions, [LICENSE_STATUS.md](LICENSE_STATUS.md) for the rights record and [SECURITY.md](SECURITY.md) for private vulnerability reporting.
+
+## License scopes
+
+VINASIG-authored software uses **AGPL-3.0-or-later**. Authored documentation uses **CC-BY-SA-4.0**. Commercial use is allowed under those standard licenses. Fonts and third-party components retain their original terms. Official VINASIG identity assets follow the separate brand policy.
+
+Read [LICENSE](LICENSE), [LICENSES.md](LICENSES.md), [VINASIG Brand Usage Policy](BRAND_POLICY.md) and [the licensing review](docs/audits/licensing-2026-10-04.md) for exact scopes, rationale and remaining review.

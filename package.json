@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "description": "VINASIG's browser-only favicon package generator.",
-  "license": "UNLICENSED",
+  "license": "AGPL-3.0-or-later",
   "repository": {
     "type": "git",
     "url": "https://github.com/VINASIG/favicon-forge.git"
@@ -20,7 +20,7 @@
   "packageManager": "npm@12.2.0",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build && npm run check:built",
+    "build": "astro build && npm run check:built && npm run check:licenses -- --built",
     "preview": "astro preview",
     "typecheck": "astro check --minimumFailingSeverity warning",
     "lint": "eslint src scripts tests *.mjs --max-warnings 0",
@@ -28,10 +28,11 @@
     "format:check": "prettier --check .",
     "check:standards": "node scripts/check-standards.ts",
     "check:built": "node scripts/check-built.ts",
-    "check": "npm run typecheck && npm run lint && npm run lint:css && npm run format:check && npm run check:standards",
+    "check": "npm run typecheck && npm run lint && npm run lint:css && npm run format:check && npm run check:standards && npm run check:licenses",
     "test": "node --test tests/*.test.ts",
     "test:browser": "node tests/browser.ts",
-    "test:responsive": "node scripts/check-responsive.mjs"
+    "test:responsive": "node scripts/check-responsive.mjs",
+    "check:licenses": "node .vinasig/standards/templates/check-licenses.mjs"
   },
   "dependencies": {
     "@lucide/astro": "1.50.0",

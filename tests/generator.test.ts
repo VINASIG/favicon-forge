@@ -153,8 +153,26 @@ await test('canonical and sitemap honor a project base and a root custom domain'
 });
 await test('the reviewed web profile and all managed snapshot files pass', async () => {
   const report = await verifyStandards();
-  // The approved snapshot adds the portable visible-interface inspector.
-  assert.equal(report.files, 38);
+  // The reviewed snapshot adds nine required licensing files to the existing 38.
+  assert.equal(report.files, 47);
+  for (const file of [
+    'LICENSE',
+    'LICENSES.md',
+    'LICENSES/CC-BY-SA-4.0.txt',
+    'BRAND_POLICY.md',
+    'docs/audits/licensing-2026-10-04.md',
+    'docs/license-text-sources.json',
+    'policies/licensing.md',
+    'templates/check-licenses.mjs',
+    'templates/license-review.md',
+  ])
+    assert(
+      (
+        await readFile(
+          new URL('../.vinasig/standards/' + file, import.meta.url),
+        )
+      ).length > 0,
+    );
   assert.equal(report.runtimeDiscovery, 'NOT_RUN');
 });
 await test('production source and regression scripts do not suppress type checking', async () => {

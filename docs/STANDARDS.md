@@ -1,14 +1,14 @@
 # Shared SI agent standards
 
-Favicon Forge adopts the reviewed `web-typescript` profile from [VINASIG Agent Standards](https://github.com/VINASIG/agent-standards/tree/7c699d1dccd05c1dd2c4f0de4bb3abae23174ccd).
+Favicon Forge adopts the reviewed `web-typescript` profile from [VINASIG Agent Standards](https://github.com/VINASIG/agent-standards/tree/31b105622b1c70f6ad362eaaab429a9afa4b1a18).
 
 | Record            | Value                                                              |
 | ----------------- | ------------------------------------------------------------------ |
 | Standards version | `0.1.0`, public preview                                            |
-| Source commit     | `7c699d1dccd05c1dd2c4f0de4bb3abae23174ccd`                         |
-| Bundle SHA-256    | `bd59e07ba80969e9e5b6788a9438e81ba14a6e22ce121e6ef192ef89f54cd07f` |
+| Source commit     | `31b105622b1c70f6ad362eaaab429a9afa4b1a18`                         |
+| Bundle SHA-256    | `e7d0fe4b417a782f0613a3367c458e9ff384fed1c43435f76c17252b5c7560e1` |
 | Profile           | `web-typescript`                                                   |
-| Managed files     | 37, plus the marked instruction block and manifest                 |
+| Managed files     | 47, plus the marked instruction block and manifest                 |
 | Owner provenance  | [`.vinasig/provenance.json`](../.vinasig/provenance.json)          |
 
 The source checkout and remote commit matched before bundling. The explicit-target install plan was reviewed before applying it. The installed skills cover workflow, dependencies, responsive/accessibility, motion, search, performance and browser-agent usability. Their paths are instructions to read; they do not register remote tools or automatically start a browser.
@@ -42,3 +42,7 @@ WEB-008 requires matching closed and opened dropdown, calendar, color and slider
 The owner approved original transparent horizontal logos selected for the actual header surface under WEB-001. Keep the source asset bytes, proportions and internal artwork. Avoid white panels, padded or rounded cards and artwork effects. Maintain the accessible logo link and its usable target independently of image size.
 
 This reviewed snapshot adds `inspectHeaderBrand` to `templates/web/interface.mjs`. The consumer browser regressions check the real header alongside rendered copy. Asset integrity, screenshot review and script-unavailable states remain separate checks.
+
+## Licensing adopted on 4 October 2026
+
+The reviewed snapshot includes the licensing policy, LIC-001 through LIC-004, full GPL/CC texts, material map, brand policy, review template and license checker. It retains its own software/prose grants rather than setting this project's primary license. The owner separately selected this project's scopes in LICENSES.md. Use npm run check:licenses for source metadata/text verification. Web builds also verify published legal text and source notices. Original assets and existing gates remain required.
