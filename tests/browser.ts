@@ -36,7 +36,7 @@ assert(
   !process.env['CI'] || requestedEngines.length === engineNames.length,
   'CI requires every browser engine; a local selection must not narrow publication gates',
 );
-const expectedCases = requestedEngines.length * 4;
+const expectedCases = requestedEngines.length * 8;
 let completed = false;
 
 const output = path.join(
@@ -60,6 +60,7 @@ const results: {
 }[] = [];
 const staticHelpChecks: {
   engine: string;
+  colorScheme: string;
   questions: number;
   screenshot: string;
   axe: 'NOT_RUN';
@@ -173,6 +174,42 @@ async function closeHelp(page: Page): Promise<void> {
   }
 }
 
+async function themePresentation(
+  page: Page,
+  colorScheme: 'light' | 'dark',
+): Promise<void> {
+  const expectedLogo =
+    colorScheme === 'dark' ? '/brand/reversed.svg' : '/brand/primary-color.svg';
+  await page.waitForFunction((suffix) => {
+    const logo = document.querySelector('[data-brand-logo] img');
+    return (
+      logo instanceof HTMLImageElement &&
+      logo.complete &&
+      logo.naturalWidth > 0 &&
+      logo.currentSrc.endsWith(suffix)
+    );
+  }, expectedLogo);
+  const presentation = await page.evaluate(() => {
+    const logo = document.querySelector('[data-brand-logo] img');
+    if (!(logo instanceof HTMLImageElement))
+      throw new Error('Missing theme-aware header logo');
+    return {
+      scheme: getComputedStyle(document.documentElement).colorScheme,
+      canvas: getComputedStyle(document.body).backgroundColor,
+      logo: logo.currentSrc,
+    };
+  });
+  assert.equal(presentation.scheme, colorScheme);
+  assert.equal(
+    presentation.canvas,
+    colorScheme === 'dark' ? 'rgb(31, 28, 29)' : 'rgb(247, 246, 244)',
+  );
+  assert(
+    presentation.logo.endsWith(expectedLogo),
+    JSON.stringify(presentation),
+  );
+}
+
 async function selectionRace(page: Page): Promise<void> {
   await page.evaluate(() => {
     const descriptor = Object.getOwnPropertyDescriptor(
@@ -249,280 +286,378 @@ try {
         [390, 844],
         [1440, 900],
       ] as const) {
-        for (const reducedMotion of ['reduce', 'no-preference'] as const) {
-          const name = `index-${engine}-${String(width)}x${String(height)}-${reducedMotion}`;
-          const context = await browser.newContext({
-            viewport: { width, height },
-            hasTouch: width === 390,
-            acceptDownloads: true,
-            reducedMotion,
-          });
-          const page = await context.newPage();
-          const errors: string[] = [];
-          const networkViolations: string[] = [];
-          const shots: string[] = [];
-          page.on('pageerror', (reason) => errors.push(reason.message));
-          page.on('request', (request) => {
-            if (
-              /^https?:/.test(request.url()) &&
-              (request.method() !== 'GET' ||
-                new URL(request.url()).origin !== new URL(server.url).origin)
-            )
-              networkViolations.push(`${request.method()} ${request.url()}`);
-          });
-          assert.equal((await page.goto(server.url))?.status(), 200);
-          await accessibility(page);
-          shots.push(await screenshot(page, `${name}-empty`));
-          await openHelp(page, width === 390);
-          await accessibility(page);
-          shots.push(await screenshot(page, `${name}-help-open`));
-          await closeHelp(page);
-          if (width === 1440 && reducedMotion === 'reduce') {
-            console.log(`${name}: checking native help without JavaScript`);
-            const staticContext = await browser.newContext({
+        for (const colorScheme of ['light', 'dark'] as const) {
+          for (const reducedMotion of ['reduce', 'no-preference'] as const) {
+            const name = `index-${engine}-${String(width)}x${String(height)}-${colorScheme}-${reducedMotion}`;
+            const context = await browser.newContext({
               viewport: { width, height },
-              javaScriptEnabled: false,
+              hasTouch: width === 390,
+              acceptDownloads: true,
+              reducedMotion,
+              colorScheme,
             });
-            try {
-              const staticPage = await staticContext.newPage();
-              assert.equal((await staticPage.goto(server.url))?.status(), 200);
-              await staticPage
-                .getByText(
-                  /JavaScript is required to create a favicon package locally/,
-                )
-                .waitFor();
-              await openHelp(staticPage, false);
-              console.log(
-                `${name}: native questions passed; capturing static help`,
-              );
-              staticHelpChecks.push({
-                engine,
-                questions: faviconQuestions.length,
-                // Axe needs JavaScript execution; the same open content is scanned above.
-                axe: 'NOT_RUN',
-                screenshot: await screenshot(
-                  staticPage,
-                  `${name}-help-no-javascript`,
-                  false,
-                ),
+            const page = await context.newPage();
+            const errors: string[] = [];
+            const networkViolations: string[] = [];
+            const shots: string[] = [];
+            page.on('pageerror', (reason) => errors.push(reason.message));
+            page.on('request', (request) => {
+              if (
+                /^https?:/.test(request.url()) &&
+                (request.method() !== 'GET' ||
+                  new URL(request.url()).origin !== new URL(server.url).origin)
+              )
+                networkViolations.push(`${request.method()} ${request.url()}`);
+            });
+            assert.equal((await page.goto(server.url))?.status(), 200);
+            await accessibility(page);
+            await themePresentation(page, colorScheme);
+            assert.equal(
+              await page.locator('#empty-preview').isVisible(),
+              true,
+            );
+            assert.equal(
+              await page.locator('#source-panel').isVisible(),
+              false,
+            );
+            assert.equal(
+              await page
+                .getByRole('button', { name: 'Download package', exact: true })
+                .isDisabled(),
+              true,
+            );
+            shots.push(await screenshot(page, `${name}-empty`));
+            await openHelp(page, width === 390);
+            await accessibility(page);
+            shots.push(await screenshot(page, `${name}-help-open`));
+            await closeHelp(page);
+            if (width === 1440 && reducedMotion === 'reduce') {
+              console.log(`${name}: checking native help without JavaScript`);
+              const staticContext = await browser.newContext({
+                viewport: { width, height },
+                javaScriptEnabled: false,
+                colorScheme,
               });
-              console.log(`${name}: static help screenshot saved`);
-            } finally {
-              await staticContext.close();
-            }
-          }
-          const chooser = page.waitForEvent('filechooser');
-          const choose = page.getByRole('button', {
-            name: 'Choose or drop a logo',
-          });
-          if (width === 390) await choose.tap();
-          else {
-            await choose.focus();
-            await page.keyboard.press('Enter');
-          }
-          await (
-            await chooser
-          ).setFiles({
-            name: 'agency-logo.svg',
-            mimeType: 'image/svg+xml',
-            buffer: fixture,
-          });
-          await page.getByRole('heading', { name: 'Preview' }).waitFor();
-          if (
-            engine === 'chromium' &&
-            width === 390 &&
-            reducedMotion === 'no-preference'
-          ) {
-            const animations = await page.evaluate(() => {
-              const list = document
-                .getAnimations()
-                .filter(
-                  (animation) => animation.effect instanceof KeyframeEffect,
+              try {
+                const staticPage = await staticContext.newPage();
+                assert.equal(
+                  (await staticPage.goto(server.url))?.status(),
+                  200,
                 );
-              return list.map((animation) => {
-                const effect = animation.effect as KeyframeEffect;
-                return {
-                  kind: animation.constructor.name,
-                  duration: effect.getTiming().duration,
-                  properties: [
-                    ...new Set(
-                      effect
-                        .getKeyframes()
-                        .flatMap((frame) =>
-                          Object.keys(frame).filter(
-                            (key) =>
-                              ![
-                                'offset',
-                                'computedOffset',
-                                'easing',
-                                'composite',
-                              ].includes(key),
-                          ),
-                        ),
-                    ),
-                  ],
-                };
-              });
+                await staticPage
+                  .getByText(
+                    /JavaScript is required to create a favicon package locally/,
+                  )
+                  .waitFor();
+                await openHelp(staticPage, false);
+                await themePresentation(staticPage, colorScheme);
+                assert.equal(
+                  await staticPage.locator('#drop-zone').isDisabled(),
+                  true,
+                );
+                assert.equal(
+                  await staticPage.locator('#download-button').isDisabled(),
+                  true,
+                );
+                console.log(
+                  `${name}: native questions passed; capturing static help`,
+                );
+                staticHelpChecks.push({
+                  engine,
+                  colorScheme,
+                  questions: faviconQuestions.length,
+                  // Axe needs JavaScript execution; the same open content is scanned above.
+                  axe: 'NOT_RUN',
+                  screenshot: await screenshot(
+                    staticPage,
+                    `${name}-help-no-javascript`,
+                    false,
+                  ),
+                });
+                console.log(`${name}: static help screenshot saved`);
+              } finally {
+                await staticContext.close();
+              }
+            }
+            const chooser = page.waitForEvent('filechooser');
+            const choose = page.getByRole('button', {
+              name: 'Choose or drop a logo',
             });
-            await writeFile(
-              path.join(output, 'motion-properties.json'),
-              JSON.stringify(animations, null, 2) + '\n',
+            if (width === 390) await choose.tap();
+            else {
+              await choose.focus();
+              await page.keyboard.press('Enter');
+            }
+            await (
+              await chooser
+            ).setFiles({
+              name: 'agency-logo.svg',
+              mimeType: 'image/svg+xml',
+              buffer: fixture,
+            });
+            await page.locator('#result-panel').waitFor({ state: 'visible' });
+            assert.equal(
+              await page.locator('#empty-preview').isVisible(),
+              false,
             );
-            for (const animation of animations) {
-              const allowed =
-                animation.kind === 'CSSAnimation'
-                  ? ['opacity', 'transform']
-                  : [
-                      'opacity',
-                      'transform',
-                      'backgroundColor',
-                      'borderTopColor',
-                      'borderRightColor',
-                      'borderBottomColor',
-                      'borderLeftColor',
-                    ];
-              assert(
-                animation.properties.every((property) =>
-                  allowed.includes(property),
-                ),
+            assert.equal(await page.locator('#source-panel').isVisible(), true);
+            if (
+              engine === 'chromium' &&
+              width === 390 &&
+              reducedMotion === 'no-preference'
+            ) {
+              const animations = await page.evaluate(() => {
+                const list = document
+                  .getAnimations()
+                  .filter(
+                    (animation) => animation.effect instanceof KeyframeEffect,
+                  );
+                return list.map((animation) => {
+                  const effect = animation.effect as KeyframeEffect;
+                  return {
+                    kind: animation.constructor.name,
+                    duration: effect.getTiming().duration,
+                    properties: [
+                      ...new Set(
+                        effect
+                          .getKeyframes()
+                          .flatMap((frame) =>
+                            Object.keys(frame).filter(
+                              (key) =>
+                                ![
+                                  'offset',
+                                  'computedOffset',
+                                  'easing',
+                                  'composite',
+                                ].includes(key),
+                            ),
+                          ),
+                      ),
+                    ],
+                  };
+                });
+              });
+              await writeFile(
+                path.join(output, `${name}-motion-properties.json`),
+                JSON.stringify(animations, null, 2) + '\n',
               );
-              assert(
-                typeof animation.duration === 'number' &&
-                  animation.duration <= 440,
+              for (const animation of animations) {
+                const allowed =
+                  animation.kind === 'CSSAnimation'
+                    ? ['opacity', 'transform']
+                    : [
+                        'opacity',
+                        'transform',
+                        'backgroundColor',
+                        'borderTopColor',
+                        'borderRightColor',
+                        'borderBottomColor',
+                        'borderLeftColor',
+                      ];
+                assert(
+                  animation.properties.every((property) =>
+                    allowed.includes(property),
+                  ),
+                );
+                assert(
+                  typeof animation.duration === 'number' &&
+                    animation.duration <= 440,
+                );
+              }
+              await page.screenshot({
+                path: path.join(output, `${name}-motion-start.png`),
+                fullPage: true,
+              });
+              await page.waitForTimeout(120);
+              await page.screenshot({
+                path: path.join(output, `${name}-motion-120ms.png`),
+                fullPage: true,
+              });
+              await writeFile(
+                path.join(output, `${name}-motion-frames.json`),
+                JSON.stringify(animations, null, 2) + '\n',
               );
             }
-            await page.screenshot({
-              path: path.join(output, `${name}-motion-start.png`),
-              fullPage: true,
-            });
-            await page.waitForTimeout(120);
-            await page.screenshot({
-              path: path.join(output, `${name}-motion-120ms.png`),
-              fullPage: true,
-            });
-            await writeFile(
-              path.join(output, 'motion-frames.json'),
-              JSON.stringify(animations, null, 2) + '\n',
+            await accessibility(page);
+            shots.push(await screenshot(page, `${name}-uploaded`));
+            const animationName = await page
+              .locator('.preview-card')
+              .first()
+              .evaluate((element) => getComputedStyle(element).animationName);
+            assert.equal(
+              animationName,
+              reducedMotion === 'reduce' ? 'none' : 'reveal',
             );
-          }
-          await accessibility(page);
-          shots.push(await screenshot(page, `${name}-uploaded`));
-          const animationName = await page
-            .locator('.preview-card')
-            .first()
-            .evaluate((element) => getComputedStyle(element).animationName);
-          assert.equal(
-            animationName,
-            reducedMotion === 'reduce' ? 'none' : 'reveal',
-          );
-          const downloadEvent = page.waitForEvent('download');
-          await page.getByRole('button', { name: 'Download package' }).click();
-          const download = await downloadEvent;
-          assert.equal(download.suggestedFilename(), 'favicon-package.zip');
-          const file = path.join(output, `${name}-package.zip`);
-          await download.saveAs(file);
-          const zip = await JSZip.loadAsync(await readFile(file));
-          assert.equal(Object.keys(zip.files).length, 10);
-          async function packed(name: string): Promise<Buffer> {
-            const entry = zip.file(name);
-            assert(entry, `Missing ZIP file: ${name}`);
-            return entry.async('nodebuffer');
-          }
-          const manifest = record(parseJson(await packed('site.webmanifest')));
-          assert.equal(manifest['name'], 'agency logo');
-          const ico = await packed('favicon.ico');
-          assert.equal(ico.readUInt16LE(2), 1);
-          assert.equal(ico.readUInt16LE(4), 3);
-          for (const [index, size] of [16, 32, 48].entries())
-            assert.equal(ico.readUInt8(6 + index * 16), size);
-          const normal = await packed('android-chrome-512x512.png');
-          const maskable = await packed('android-chrome-512x512-maskable.png');
-          assert(
-            !normal.equals(maskable),
-            'Maskable icon still duplicates the ordinary icon',
-          );
-          const pixels = await page.evaluate(async (encoded) => {
-            const image = new Image();
-            image.src = `data:image/png;base64,${encoded}`;
-            await image.decode();
-            const canvas = document.createElement('canvas');
-            canvas.width = 512;
-            canvas.height = 512;
-            const context = canvas.getContext('2d');
-            if (!context) throw new Error('Missing canvas');
-            context.drawImage(image, 0, 0);
-            const data = context.getImageData(0, 0, 512, 512).data;
-            let opaque = true,
-              maximumRadius = 0,
-              contentPixels = 0;
-            for (let y = 0; y < 512; y++)
-              for (let x = 0; x < 512; x++) {
-                const index = (y * 512 + x) * 4;
-                if (data[index + 3] !== 255) opaque = false;
-                if (
-                  data[index] !== 255 ||
-                  data[index + 1] !== 255 ||
-                  data[index + 2] !== 255
-                ) {
-                  contentPixels++;
-                  maximumRadius = Math.max(
-                    maximumRadius,
-                    Math.hypot(x + 0.5 - 256, y + 0.5 - 256),
-                  );
-                }
-              }
-            return { opaque, maximumRadius, contentPixels };
-          }, maskable.toString('base64'));
-          assert(
-            pixels.opaque &&
-              pixels.contentPixels > 0 &&
-              pixels.maximumRadius <= 512 * 0.4,
-            JSON.stringify(pixels),
-          );
-          await page.locator('#file-input').setInputFiles({
-            name: 'notes.txt',
-            mimeType: 'text/plain',
-            buffer: Buffer.from('test fixture'),
-          });
-          assert.equal(
-            await page.getByRole('alert').innerText(),
-            'Please choose an image file.',
-          );
-          await accessibility(page);
-          shots.push(await screenshot(page, `${name}-validation-error`));
-          await page.locator('#file-input').setInputFiles({
-            name: 'broken.png',
-            mimeType: 'image/png',
-            buffer: Buffer.from('invalid PNG fixture'),
-          });
-          await page
-            .getByRole('alert')
-            .filter({ hasText: 'could not be read' })
-            .waitFor();
-          assert.equal(
+            const downloadEvent = page.waitForEvent('download');
             await page
               .getByRole('button', { name: 'Download package' })
-              .isEnabled(),
-            true,
-          );
-          await selectionRace(page);
-          shots.push(await screenshot(page, `${name}-selection-race`));
-          assert.deepEqual(
-            networkViolations,
-            [],
-            'The browser uploaded data or requested a remote service',
-          );
-          assert.deepEqual(errors, []);
-          results.push({
-            name,
-            accessibilityScans: 4,
-            screenshots: shots,
-            noLogoUpload: true,
-            packageFiles: 10,
-            motion: animationName,
-            helpQuestions: faviconQuestions.length,
-          });
-          await context.close();
+              .click();
+            const download = await downloadEvent;
+            assert.equal(download.suggestedFilename(), 'favicon-package.zip');
+            const file = path.join(output, `${name}-package.zip`);
+            await download.saveAs(file);
+            const zip = await JSZip.loadAsync(await readFile(file));
+            assert.equal(Object.keys(zip.files).length, 10);
+            async function packed(name: string): Promise<Buffer> {
+              const entry = zip.file(name);
+              assert(entry, `Missing ZIP file: ${name}`);
+              return entry.async('nodebuffer');
+            }
+            const manifest = record(
+              parseJson(await packed('site.webmanifest')),
+            );
+            assert.equal(manifest['name'], 'agency logo');
+            const ico = await packed('favicon.ico');
+            assert.equal(ico.readUInt16LE(2), 1);
+            assert.equal(ico.readUInt16LE(4), 3);
+            for (const [index, size] of [16, 32, 48].entries())
+              assert.equal(ico.readUInt8(6 + index * 16), size);
+            const normal = await packed('android-chrome-512x512.png');
+            const maskable = await packed(
+              'android-chrome-512x512-maskable.png',
+            );
+            assert(
+              !normal.equals(maskable),
+              'Maskable icon still duplicates the ordinary icon',
+            );
+            const pixels = await page.evaluate(async (encoded) => {
+              const image = new Image();
+              image.src = `data:image/png;base64,${encoded}`;
+              await image.decode();
+              const canvas = document.createElement('canvas');
+              canvas.width = 512;
+              canvas.height = 512;
+              const context = canvas.getContext('2d');
+              if (!context) throw new Error('Missing canvas');
+              context.drawImage(image, 0, 0);
+              const data = context.getImageData(0, 0, 512, 512).data;
+              let opaque = true,
+                maximumRadius = 0,
+                contentPixels = 0;
+              for (let y = 0; y < 512; y++)
+                for (let x = 0; x < 512; x++) {
+                  const index = (y * 512 + x) * 4;
+                  if (data[index + 3] !== 255) opaque = false;
+                  if (
+                    data[index] !== 255 ||
+                    data[index + 1] !== 255 ||
+                    data[index + 2] !== 255
+                  ) {
+                    contentPixels++;
+                    maximumRadius = Math.max(
+                      maximumRadius,
+                      Math.hypot(x + 0.5 - 256, y + 0.5 - 256),
+                    );
+                  }
+                }
+              return { opaque, maximumRadius, contentPixels };
+            }, maskable.toString('base64'));
+            assert(
+              pixels.opaque &&
+                pixels.contentPixels > 0 &&
+                pixels.maximumRadius <= 512 * 0.4,
+              JSON.stringify(pixels),
+            );
+            const themeSwitch =
+              width === 1440 &&
+              colorScheme === 'light' &&
+              reducedMotion === 'reduce';
+            if (themeSwitch) {
+              const previews = await page
+                .locator('#preview-grid img')
+                .evaluateAll((images) =>
+                  images.map((image) => (image as HTMLImageElement).src),
+                );
+              const metadata = await page.locator('#file-meta').innerText();
+              await page.emulateMedia({ colorScheme: 'dark' });
+              await themePresentation(page, 'dark');
+              await accessibility(page);
+              assert.equal(
+                await page.locator('#file-meta').innerText(),
+                metadata,
+              );
+              assert.deepEqual(
+                await page
+                  .locator('#preview-grid img')
+                  .evaluateAll((images) =>
+                    images.map((image) => (image as HTMLImageElement).src),
+                  ),
+                previews,
+              );
+              shots.push(await screenshot(page, `${name}-theme-switched`));
+              const switchedDownload = page.waitForEvent('download');
+              await page
+                .getByRole('button', { name: 'Download package', exact: true })
+                .click();
+              const switchedFile = path.join(
+                output,
+                `${name}-dark-package.zip`,
+              );
+              await (await switchedDownload).saveAs(switchedFile);
+              const switchedZip = await JSZip.loadAsync(
+                await readFile(switchedFile),
+              );
+              assert.deepEqual(
+                Object.keys(switchedZip.files),
+                Object.keys(zip.files),
+              );
+              for (const fileName of Object.keys(zip.files)) {
+                const switchedEntry = switchedZip.file(fileName);
+                assert(switchedEntry);
+                assert.deepEqual(
+                  await switchedEntry.async('nodebuffer'),
+                  await packed(fileName),
+                  'A theme change altered the generated package',
+                );
+              }
+              await page.emulateMedia({ colorScheme });
+              await themePresentation(page, colorScheme);
+            }
+            await page.locator('#file-input').setInputFiles({
+              name: 'notes.txt',
+              mimeType: 'text/plain',
+              buffer: Buffer.from('test fixture'),
+            });
+            assert.equal(
+              await page.getByRole('alert').innerText(),
+              'Please choose an image file.',
+            );
+            await accessibility(page);
+            shots.push(await screenshot(page, `${name}-validation-error`));
+            await page.locator('#file-input').setInputFiles({
+              name: 'broken.png',
+              mimeType: 'image/png',
+              buffer: Buffer.from('invalid PNG fixture'),
+            });
+            await page
+              .getByRole('alert')
+              .filter({ hasText: 'could not be read' })
+              .waitFor();
+            assert.equal(
+              await page
+                .getByRole('button', { name: 'Download package' })
+                .isEnabled(),
+              true,
+            );
+            await selectionRace(page);
+            shots.push(await screenshot(page, `${name}-selection-race`));
+            assert.deepEqual(
+              networkViolations,
+              [],
+              'The browser uploaded data or requested a remote service',
+            );
+            assert.deepEqual(errors, []);
+            results.push({
+              name,
+              accessibilityScans: themeSwitch ? 5 : 4,
+              screenshots: shots,
+              noLogoUpload: true,
+              packageFiles: 10,
+              motion: animationName,
+              helpQuestions: faviconQuestions.length,
+            });
+            await context.close();
+          }
         }
       }
     } finally {
@@ -530,7 +665,7 @@ try {
     }
   }
   assert.equal(results.length, expectedCases);
-  assert.equal(staticHelpChecks.length, requestedEngines.length);
+  assert.equal(staticHelpChecks.length, requestedEngines.length * 2);
   completed = true;
 } finally {
   await server.stop();

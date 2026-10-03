@@ -20,9 +20,11 @@ This project adopts the VINASIG design system's Bright Playful Minimalism direct
 - Keep the supplied VINASIG logo and favicon exports unchanged. Do not redraw, recolor or retypeset them.
 - Configure the supplied 16, 32 and 48 px favicon exports in the document head. Check their paths at the origin root on https://favicon.vinasig.io.vn/.
 - Keep body text near 1rem and supporting text at least 0.875rem. Use English, sentence case, straight quotes and concise copy.
+- Match the QR/BMI tool page shell, typography and workspace. Support both system color preferences with CSS and original Primary Color/Reversed logo exports before JavaScript runs. Read the 4 October interface decision in docs/BRAND.md.
 - Give controls native semantics, accessible names and visible keyboard focus. Keep loading, error and replacement states understandable.
 - Fix layout sizing and wrapping when content overflows. Do not clip the whole page to conceal a problem.
 - Keep a user's generated icons and manifest tied to their logo and website. Do not inject VINASIG artwork or a VINASIG site name into their output.
+- Keep theme and layout changes independent of generated pixels and package contents. Attach file-picker handlers before enabling the initial control.
 
 ## Source map
 

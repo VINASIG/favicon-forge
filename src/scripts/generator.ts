@@ -43,6 +43,8 @@ const dropTitle = required('#drop-title', HTMLSpanElement);
 const dropSubtitle = required('#drop-subtitle', HTMLSpanElement);
 const error = required('#error-message', HTMLParagraphElement);
 const resultPanel = required('#result-panel', HTMLDivElement);
+const sourcePanel = required('#source-panel', HTMLDivElement);
+const emptyPreview = required('#empty-preview', HTMLDivElement);
 const sourcePreview = required('#source-preview', HTMLImageElement);
 const fileMeta = required('#file-meta', HTMLDivElement);
 const previewGrid = required('#preview-grid', HTMLDivElement);
@@ -75,7 +77,7 @@ function readingState(active: boolean): void {
     dropZone.removeAttribute('aria-busy');
     dropSubtitle.textContent = current
       ? 'PNG, JPG, WebP or SVG. Up to 10 MB. Choose a new file to replace this logo.'
-      : 'PNG, JPG, WebP or SVG. Up to 10 MB. 512 × 512 or larger recommended.';
+      : 'PNG, JPG, WebP or SVG. Up to 10 MB. 512 by 512 pixels or larger recommended.';
   }
 }
 
@@ -115,6 +117,8 @@ async function handleFile(file: File | undefined): Promise<void> {
     renderPreviews(source);
     current = source;
     resultPanel.hidden = false;
+    sourcePanel.hidden = false;
+    emptyPreview.hidden = true;
     dropZone.classList.add('has-file');
     dropZone.setAttribute('aria-label', 'Choose or drop another logo');
     dropTitle.textContent = 'Drop or choose another logo';
@@ -194,7 +198,7 @@ async function downloadPackage(): Promise<void> {
       URL.revokeObjectURL(url);
     }, 1000);
   } catch (reason) {
-    showError(`Could not create the ZIP file: ${errorMessage(reason)}`);
+    showError(`Could not create the ZIP file. ${errorMessage(reason)}`);
   } finally {
     packaging = false;
     downloadButton.disabled = false;
@@ -230,3 +234,6 @@ for (const eventName of ['dragleave', 'drop'])
 dropZone.addEventListener('drop', (event) => {
   if (!dropZone.disabled) void handleFile(event.dataTransfer?.files[0]);
 });
+
+// Enable the file-picker control only after its local handlers are attached.
+dropZone.disabled = false;

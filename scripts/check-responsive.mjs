@@ -23,7 +23,7 @@ const viewports = [
   [768, 1024],
   [1024, 768],
   [1440, 900],
-  ...[320, 519, 520, 521, 600, 719, 720, 721, 900, 1280].map(
+  ...[320, 519, 520, 521, 600, 719, 720, 721, 831, 832, 833, 900, 1280].map(
     /** @returns {[number, number]} */ (width) => [width, 900],
   ),
 ];
@@ -87,18 +87,39 @@ async function checkLayout(page, name, expectedColumns) {
       if (box.height < 44)
         problems.push('A help question has a small hit target');
     }
-    const range = document.createRange();
-    range.selectNodeContents(element('.product-name'));
+    const brand = element('.brand-link').getBoundingClientRect();
     if (
-      [...range.getClientRects()].some(
-        (box) =>
-          box.left < source.right &&
-          box.right > source.left &&
-          box.top < source.bottom &&
-          box.bottom > source.top,
-      )
+      brand.left < source.right &&
+      brand.right > source.left &&
+      brand.top < source.bottom &&
+      brand.bottom > source.top
     )
-      problems.push('Header title overlaps View source');
+      problems.push('Header logo overlaps View source');
+    const header = element('.site-header').getBoundingClientRect();
+    if (!fits(brand, header) || !fits(source, header))
+      problems.push('Header links exceed their container');
+    if (brand.height < 44 || source.height < 44)
+      problems.push('A header link has a small hit target');
+    const workspace = element('.workspace').getBoundingClientRect();
+    for (const selector of [
+      '.editor',
+      '.preview',
+      '.empty-preview',
+      '.source-preview',
+      '.site-footer',
+    ]) {
+      const target = element(selector);
+      if (
+        target.getClientRects().length &&
+        !fits(
+          target.getBoundingClientRect(),
+          selector === '.site-footer'
+            ? element('.app-shell').getBoundingClientRect()
+            : workspace,
+        )
+      )
+        problems.push(`${selector} exceeds its container`);
+    }
     const cards = [...document.querySelectorAll('.preview-card')].filter(
       (card) => card instanceof HTMLElement,
     );
@@ -168,132 +189,145 @@ async function checkLayout(page, name, expectedColumns) {
 try {
   browser = await chromium.launch({ headless: true });
   for (const [width, height] of viewports) {
-    for (const fontPercent of [100, 200]) {
-      const name = `index--${String(width)}x${String(height)}--text-${String(fontPercent)}`;
-      const context = await browser.newContext({
-        viewport: { width, height },
-        hasTouch: width <= 390,
-        isMobile: width <= 390,
-        acceptDownloads: true,
-        reducedMotion: 'reduce',
-      });
-      const page = await context.newPage();
-      page.on('pageerror', (error) =>
-        failures.push({ name, problems: [error.message] }),
-      );
-      await page.goto(server.url);
-      await page.evaluate((percent) => {
-        document.documentElement.style.fontSize = `${String(percent)}%`;
-      }, fontPercent);
-      await checkLayout(page, `${name}--empty`);
-      const summaries = await page.locator('.help summary').all();
-      for (const summary of summaries) {
-        if (width <= 390) await summary.tap();
-        else {
+    for (const colorScheme of ['light', 'dark']) {
+      for (const fontPercent of [100, 200]) {
+        const name = `index--${String(width)}x${String(height)}--${colorScheme}--text-${String(fontPercent)}`;
+        const context = await browser.newContext({
+          viewport: { width, height },
+          hasTouch: width <= 390,
+          isMobile: width <= 390,
+          acceptDownloads: true,
+          reducedMotion: 'reduce',
+          colorScheme: /** @type {'light'|'dark'} */ (colorScheme),
+        });
+        const page = await context.newPage();
+        page.on('pageerror', (error) =>
+          failures.push({ name, problems: [error.message] }),
+        );
+        await page.goto(server.url);
+        const actualTheme = await page.evaluate(
+          () => getComputedStyle(document.documentElement).colorScheme,
+        );
+        assert.equal(
+          actualTheme,
+          colorScheme,
+          'The system preference must select the matching theme',
+        );
+        await page.evaluate((percent) => {
+          document.documentElement.style.fontSize = `${String(percent)}%`;
+        }, fontPercent);
+        await checkLayout(page, `${name}--empty`);
+        const summaries = await page.locator('.help summary').all();
+        for (const summary of summaries) {
+          if (width <= 390) await summary.tap();
+          else {
+            await summary.focus();
+            await page.keyboard.press('Enter');
+          }
+        }
+        assert.equal(await page.locator('.help details[open]').count(), 5);
+        await checkLayout(page, `${name}--help-open`);
+        for (const summary of summaries) {
           await summary.focus();
+          await page.keyboard.press('Space');
+        }
+        assert.equal(await page.locator('.help details[open]').count(), 0);
+        const chooserEvent = page.waitForEvent('filechooser');
+        if (width <= 390) await page.locator('#drop-zone').tap();
+        else {
+          await page.locator('#drop-zone').focus();
           await page.keyboard.press('Enter');
         }
-      }
-      assert.equal(await page.locator('.help details[open]').count(), 5);
-      await checkLayout(page, `${name}--help-open`);
-      for (const summary of summaries) {
-        await summary.focus();
-        await page.keyboard.press('Space');
-      }
-      assert.equal(await page.locator('.help details[open]').count(), 0);
-      const chooserEvent = page.waitForEvent('filechooser');
-      if (width <= 390) await page.locator('#drop-zone').tap();
-      else {
-        await page.locator('#drop-zone').focus();
-        await page.keyboard.press('Enter');
-      }
-      await (
-        await chooserEvent
-      ).setFiles({
-        name: `${'x'.repeat(220)}.svg`,
-        mimeType: 'image/svg+xml',
-        buffer: logo,
-      });
-      await page.locator('#result-panel').waitFor({ state: 'visible' });
-      await checkLayout(
-        page,
-        `${name}--uploaded`,
-        fontPercent === 100 ? (width <= 520 ? 2 : 3) : undefined,
-      );
-      await page.evaluate(() => {
-        const original = /** @type {HTMLCanvasElement['toBlob']} */ (
-          Reflect.get(HTMLCanvasElement.prototype, 'toBlob')
-        );
-        let release = () => {};
-        /** @type {Promise<void>} */
-        const gate = new Promise((resolve) => {
-          release = resolve;
+        await (
+          await chooserEvent
+        ).setFiles({
+          name: `${'x'.repeat(220)}.svg`,
+          mimeType: 'image/svg+xml',
+          buffer: logo,
         });
-        /** @param {BlobCallback} callback
-         * @param {string} [type]
-         * @param {number} [quality]
-         * @this {HTMLCanvasElement}
-         */
-        HTMLCanvasElement.prototype.toBlob = function (
-          callback,
-          type,
-          quality,
-        ) {
-          original.call(
-            this,
-            (blob) => {
-              void gate.then(() => {
-                callback(blob);
-              });
-            },
+        await page.locator('#result-panel').waitFor({ state: 'visible' });
+        await checkLayout(
+          page,
+          `${name}--uploaded`,
+          fontPercent === 100 ? (width <= 520 ? 2 : 3) : undefined,
+        );
+        await page.evaluate(() => {
+          const original = /** @type {HTMLCanvasElement['toBlob']} */ (
+            Reflect.get(HTMLCanvasElement.prototype, 'toBlob')
+          );
+          let release = () => {};
+          /** @type {Promise<void>} */
+          const gate = new Promise((resolve) => {
+            release = resolve;
+          });
+          /** @param {BlobCallback} callback
+           * @param {string} [type]
+           * @param {number} [quality]
+           * @this {HTMLCanvasElement}
+           */
+          HTMLCanvasElement.prototype.toBlob = function (
+            callback,
             type,
             quality,
-          );
-        };
-        const hooks =
-          /** @type {Window & {releaseResponsiveCanvas:()=>void}} */ (window);
-        hooks.releaseResponsiveCanvas = () => {
-          HTMLCanvasElement.prototype.toBlob = original;
-          release();
-        };
-      });
-      const downloadEvent = page.waitForEvent('download');
-      await page.locator('#download-button').click();
-      try {
-        assert.equal(
-          await page.locator('#download-button').getAttribute('aria-busy'),
-          'true',
-        );
-        assert.equal(await page.locator('#drop-zone').isDisabled(), true);
-        await checkLayout(page, `${name}--creating-package`);
-      } finally {
-        await page.evaluate(() => {
+          ) {
+            original.call(
+              this,
+              (blob) => {
+                void gate.then(() => {
+                  callback(blob);
+                });
+              },
+              type,
+              quality,
+            );
+          };
           const hooks =
             /** @type {Window & {releaseResponsiveCanvas:()=>void}} */ (window);
-          hooks.releaseResponsiveCanvas();
+          hooks.releaseResponsiveCanvas = () => {
+            HTMLCanvasElement.prototype.toBlob = original;
+            release();
+          };
         });
+        const downloadEvent = page.waitForEvent('download');
+        await page.locator('#download-button').click();
+        try {
+          assert.equal(
+            await page.locator('#download-button').getAttribute('aria-busy'),
+            'true',
+          );
+          assert.equal(await page.locator('#drop-zone').isDisabled(), true);
+          await checkLayout(page, `${name}--creating-package`);
+        } finally {
+          await page.evaluate(() => {
+            const hooks =
+              /** @type {Window & {releaseResponsiveCanvas:()=>void}} */ (
+                window
+              );
+            hooks.releaseResponsiveCanvas();
+          });
+        }
+        assert.equal(
+          (await downloadEvent).suggestedFilename(),
+          'favicon-package.zip',
+        );
+        await page.locator('#download-button:not([disabled])').waitFor();
+        assert.equal(
+          await page.locator('#download-button').getAttribute('aria-busy'),
+          null,
+        );
+        assert.equal(await page.locator('#drop-zone').isEnabled(), true);
+        await page.locator('#file-input').setInputFiles({
+          name: 'notes.txt',
+          mimeType: 'text/plain',
+          buffer: Buffer.from('test fixture'),
+        });
+        assert.equal(
+          await page.getByRole('alert').textContent(),
+          'Please choose an image file.',
+        );
+        await checkLayout(page, `${name}--validation-error`);
+        await context.close();
       }
-      assert.equal(
-        (await downloadEvent).suggestedFilename(),
-        'favicon-package.zip',
-      );
-      await page.locator('#download-button:not([disabled])').waitFor();
-      assert.equal(
-        await page.locator('#download-button').getAttribute('aria-busy'),
-        null,
-      );
-      assert.equal(await page.locator('#drop-zone').isEnabled(), true);
-      await page.locator('#file-input').setInputFiles({
-        name: 'notes.txt',
-        mimeType: 'text/plain',
-        buffer: Buffer.from('test fixture'),
-      });
-      assert.equal(
-        await page.getByRole('alert').textContent(),
-        'Please choose an image file.',
-      );
-      await checkLayout(page, `${name}--validation-error`);
-      await context.close();
     }
   }
 } finally {

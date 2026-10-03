@@ -8,7 +8,7 @@ Generate a complete favicon package from one logo. Choose or drop an image, revi
 
 ## Project context
 
-The application uses Astro for a static page, Canvas for local image processing, and JSZip for packaging. VINASIG's supplied logo exports, Space Grotesk font, identity colors and Lucide interface icons define the website's visual direction. See [the brand integration record](docs/BRAND.md), [the project guide for SI agents](AGENTS.md) and [the adopted shared standards](docs/STANDARDS.md).
+The application uses Astro for a static page, Canvas for local image processing, and JSZip for packaging. Its page shell, typography and workspace follow VINASIG's QR and BMI tools. Light and dark appearances follow the system preference, including changes while the page is open. Original transparent VINASIG logo exports match each surface. Space Grotesk stays local and Lucide supplies interface icons. See [the brand integration record](docs/BRAND.md), [the project guide for SI agents](AGENTS.md) and [the adopted shared standards](docs/STANDARDS.md).
 
 VINASIG uses **Super Intelligence (SI)** and **SI agents** in project-authored guidance. This is a naming convention. Preserve the original wording of external source titles, official names, quotations and technical identifiers.
 
@@ -32,7 +32,7 @@ npx --yes npm@12.2.0 run preview
 
 The production build is written to `dist/`. Local inspection files belong in ignored `output/`.
 
-`check` runs strict Astro/TypeScript checking, typed ESLint, Stylelint, formatting and the shared snapshot integrity gate. `build` validates generated HTML, public URLs and the ten preserved public assets. See [CONTRIBUTING.md](CONTRIBUTING.md) for the complete contributor workflow.
+`check` runs strict Astro/TypeScript checking, typed ESLint, Stylelint, formatting and the shared snapshot integrity gate. `build` validates generated HTML, public URLs and eleven byte-verified public assets. See [CONTRIBUTING.md](CONTRIBUTING.md) for the complete contributor workflow.
 
 ### Browser and responsive checks
 
@@ -44,11 +44,11 @@ npx --yes npm@12.2.0 run test:browser
 npx --yes npm@12.2.0 run test:responsive
 ```
 
-Each check builds the current source, starts its own preview on an available port, and stops that preview when finished. Browser flows cover Chromium, Firefox and WebKit at 390 × 844 and 1440 × 900, with normal/reduced motion, axe scans, touch/keyboard file selection, downloaded ZIP contents, maskable pixels, invalid images and out-of-order image decoding. Request observation checks that the logo stays local.
+Each check builds the current source, starts its own preview on an available port, and stops that preview when finished. The 24 browser flows cover Chromium, Firefox and WebKit at 390 × 844 and 1440 × 900, both light/dark preferences and normal/reduced motion. They include axe scans, touch/keyboard file selection, downloaded ZIP contents, maskable pixels, invalid images and out-of-order image decoding. Live theme changes retain the uploaded logo and produce identical package file contents. Both themes select the correct transparent logo even without JavaScript. Request observation checks that the logo stays local.
 
 For a scoped local diagnosis, `BROWSER_ENGINES=chromium,webkit` selects those engines and records Firefox as unrun in the report. The default always selects all three. CI rejects any selection that omits an engine, so a local environment blocker cannot turn into a narrower publication gate.
 
-The responsive check covers 150 states across the five standard viewports, 320 CSS px, both sides of the 520 and 720 px breakpoints, intermediate widths and text enlarged to 200%. Assertions check horizontal overflow, header text collisions, help disclosures, preview images and labels, loading controls, file selection and validation. Browser flows also open and close help with keyboard/touch and inspect it without JavaScript in each engine. Inspect full-page screenshots alongside these checks. Reports are saved in `output/checks/`, with images and packages in `output/responsive/flows-*/` and `output/responsive/regression-*/`. These checks use browser emulation; physical devices, screen readers and independent agent trials need separate evidence.
+The responsive check covers 360 states across both themes, the five standard viewports, 320 CSS px, both sides of the 520 and 832 px breakpoints, intermediate widths and text enlarged to 200%. Assertions check horizontal overflow, header collisions, panel bounds, help disclosures, preview images and labels, loading controls, file selection and validation. Browser flows also open and close help with keyboard/touch and inspect it without JavaScript in each engine. Inspect full-page screenshots alongside these checks. Reports are saved in `output/checks/`, with images and packages in `output/responsive/flows-*/` and `output/responsive/regression-*/`. These checks use browser emulation; physical devices, screen readers and independent agent trials need separate evidence.
 
 ## GitHub Pages
 

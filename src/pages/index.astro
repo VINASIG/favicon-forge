@@ -1,5 +1,5 @@
 ---
-import { ArrowUpRight, Download, ShieldCheck, Upload } from '@lucide/astro';
+import { Download, Image, ShieldCheck, Upload } from '@lucide/astro';
 import '../styles/tokens.css';
 import '../styles/app.css';
 import { publicPage } from '../lib/site.ts';
@@ -26,8 +26,18 @@ const structuredData = {
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width" />
-    <meta name="theme-color" content="#f7f6f4" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <meta
+      name="theme-color"
+      content="#f7f6f4"
+      media="(prefers-color-scheme: light)"
+    />
+    <meta
+      name="theme-color"
+      content="#1f1c1d"
+      media="(prefers-color-scheme: dark)"
+    />
     <meta name="description" content={description} />
     <meta property="og:title" content="VINASIG Favicon Forge" />
     <meta property="og:description" content={description} />
@@ -76,80 +86,80 @@ const structuredData = {
     <title>VINASIG Favicon Forge - Generate favicons from your logo</title>
   </head>
   <body>
-    <a class="skip-link" href="#generator">
+    <a class="skip-link" href="#main">
       Skip to generator
     </a>
-    <header class="site-header page-shell">
-      <div class="brand">
+    <div class="app-shell">
+      <header class="site-header">
         <a
-          class="brand-link"
+          class="brand-link brand"
           data-brand-logo
           href="https://github.com/VINASIG"
           aria-label="VINASIG on GitHub"
         >
-          <img
-            src={`${basePath}brand/primary-color.svg`}
-            width="162"
-            height="42"
-            alt="VINASIG"
-          />
+          <picture>
+            <source
+              media="(prefers-color-scheme: dark)"
+              srcset={`${basePath}brand/reversed.svg`}
+            />
+            <img
+              src={`${basePath}brand/primary-color.svg`}
+              width="540"
+              height="140"
+              alt="VINASIG"
+            />
+          </picture>
         </a>
-        <span class="product-name">Favicon Forge</span>
-      </div>
-      <a class="source-link" href="https://github.com/VINASIG/favicon-forge">
-        View source <ArrowUpRight size={18} aria-hidden="true" />
-      </a>
-    </header>
-    <main class="page-shell">
-      <section class="intro" aria-labelledby="page-title">
-        <h1 id="page-title">Generate favicons</h1>
-        <p>Drop one logo. Download the complete package.</p>
-      </section>
+        <a class="source-link" href="https://github.com/VINASIG/favicon-forge">
+          View source
+        </a>
+      </header>
+      <main id="main" tabindex="-1">
+        <div class="intro">
+          <h1 id="page-title">Favicon Forge</h1>
+          <p class="lead">One logo. Every icon your website needs.</p>
+          <p>Create browser and app icons here. No account or image uploads.</p>
+        </div>
+        <div class="workspace" id="generator">
+          <section class="editor" aria-labelledby="upload-heading">
+            <h2 id="upload-heading">Choose your logo</h2>
+            <input
+              id="file-input"
+              type="file"
+              accept="image/png,image/jpeg,image/webp,image/svg+xml"
+              aria-label="Logo image"
+              hidden
+            />
+            <button
+              class="drop-zone"
+              id="drop-zone"
+              type="button"
+              aria-label="Choose or drop a logo"
+              aria-describedby="drop-subtitle"
+              disabled
+            >
+              <span class="drop-icon" aria-hidden="true">
+                <Upload size={24} />
+              </span>
+              <span class="drop-copy">
+                <span class="drop-title" id="drop-title">
+                  Drop or choose a logo
+                </span>
+                <span class="drop-subtitle" id="drop-subtitle">
+                  PNG, JPG, WebP or SVG. Up to 10 MB.
+                  <br />
+                  512 by 512 pixels or larger recommended.
+                </span>
+              </span>
+            </button>
 
-      <section class="workspace" id="generator" aria-label="Favicon generator">
-        <input
-          id="file-input"
-          type="file"
-          accept="image/png,image/jpeg,image/webp,image/svg+xml"
-          aria-label="Logo image"
-          hidden
-        />
-        <button
-          class="drop-zone"
-          id="drop-zone"
-          type="button"
-          aria-label="Choose or drop a logo"
-          aria-describedby="drop-subtitle"
-        >
-          <span class="drop-icon" aria-hidden="true">
-            <Upload size={24} />
-          </span>
-          <span class="drop-copy">
-            <span class="drop-title" id="drop-title">
-              Drop or choose a logo
-            </span>
-            <span class="drop-subtitle" id="drop-subtitle">
-              PNG, JPG, WebP or SVG. Up to 10 MB.
-              <br />
-              512 × 512 or larger recommended.
-            </span>
-          </span>
-        </button>
+            <p class="privacy-note supporting">
+              <ShieldCheck size={18} aria-hidden="true" />
+              Your image stays in your browser.
+            </p>
 
-        <p class="privacy-note">
-          <ShieldCheck size={18} aria-hidden="true" />
-          Your image stays in your browser.
-        </p>
-
-        <p class="error-message" id="error-message" role="alert" hidden></p>
-
-        <div class="result-panel" id="result-panel" hidden>
-          <div class="result-header">
-            <h2>Preview</h2>
-          </div>
-
-          <div class="preview-layout">
-            <div class="source-preview">
+            <p class="error-message" id="error-message" role="alert" hidden></p>
+            <div class="source-preview" id="source-panel" hidden>
               <div class="preview-label">Source logo</div>
               <div class="source-frame checkerboard">
                 <img
@@ -159,77 +169,97 @@ const structuredData = {
                   alt="Selected logo"
                 />
               </div>
-              <div class="file-meta" id="file-meta"></div>
+              <div class="file-meta" id="file-meta" data-user-content></div>
             </div>
-
-            <div class="generated-previews">
-              <div class="preview-label">Output sizes</div>
-              <div class="output-surface checkerboard">
-                <div class="preview-grid pixel-mode" id="preview-grid"></div>
+          </section>
+          <section class="preview" aria-labelledby="preview-heading">
+            <h2 id="preview-heading">Preview</h2>
+            <div class="empty-preview" id="empty-preview">
+              <Image size={32} aria-hidden="true" />
+              <p>Your icons will appear here.</p>
+            </div>
+            <div class="result-panel" id="result-panel" hidden>
+              <div class="generated-previews">
+                <div class="preview-label">Output sizes</div>
+                <div class="output-surface checkerboard">
+                  <div class="preview-grid pixel-mode" id="preview-grid"></div>
+                </div>
               </div>
             </div>
-          </div>
-
-          <button class="download-button" id="download-button" type="button">
-            <span id="download-label">Download package</span>
-            <Download class="download-icon" size={20} aria-hidden="true" />
-            <span class="spinner" aria-hidden="true" hidden></span>
-          </button>
-          <p class="package-note">
-            Includes browser icons, app icons, a web manifest and setup
-            instructions.
-          </p>
+            <button
+              class="download-button"
+              id="download-button"
+              type="button"
+              aria-describedby="package-note"
+              disabled
+            >
+              <span id="download-label">Download package</span>
+              <Download class="download-icon" size={20} aria-hidden="true" />
+              <span class="spinner" aria-hidden="true" hidden></span>
+            </button>
+            <p class="package-note supporting" id="package-note">
+              Includes browser icons, app icons, a web manifest and setup
+              instructions.
+            </p>
+          </section>
         </div>
-      </section>
-      <div class="help">
-        <section aria-labelledby="setup-heading">
-          <h2 id="setup-heading">How to use your favicon package</h2>
-          <p>{description}</p>
-          <p>
-            Favicons identify your website in browser tabs and bookmarks. The
-            package also includes larger icons for saved or installed web apps.
-          </p>
-          <ol class="setup-steps">
-            <li>
-              Choose a logo, review the previews and download the ZIP package.
-            </li>
-            <li>
-              Extract the icons and <code>site.webmanifest</code> into your
-              site's public folder. Copy the markup from{' '}
-              <code>favicon-snippet.html</code> into your page's{' '}
-              <code>&lt;head&gt;</code> and adjust paths if the icons are in a
-              different folder.
-            </li>
-            <li>
-              Edit the name, colors, start URL and scope in{' '}
-              <code>site.webmanifest</code> for your website. Build and deploy,
-              then check that the linked icon files load.
-            </li>
-          </ol>
-          <p class="help-reference">
-            <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Attributes/rel#icon">
-              MDN guide to favicon links
-            </a>
-          </p>
-        </section>
-        <section aria-labelledby="questions-heading">
-          <h2 id="questions-heading">Common questions</h2>
-          {faviconQuestions.map((item) => (
-            <details id={item.id}>
-              <summary>{item.question}</summary>
-              <p>{item.answer}</p>
-              {item.reference && (
-                <p class="help-reference">
-                  <a href={item.reference.href}>{item.reference.label}</a>
-                </p>
-              )}
-            </details>
-          ))}
-        </section>
-      </div>
-    </main>
+        <div class="help">
+          <section aria-labelledby="setup-heading">
+            <h2 id="setup-heading">How to use your favicon package</h2>
+            <p>{description}</p>
+            <p>
+              Favicons identify your website in browser tabs and bookmarks. The
+              package also includes larger icons for saved or installed web
+              apps.
+            </p>
+            <ol class="setup-steps">
+              <li>
+                Choose a logo, review the previews and download the ZIP package.
+              </li>
+              <li>
+                Extract the icons and <code>site.webmanifest</code> into your
+                site's public folder. Copy the markup from{' '}
+                <code>favicon-snippet.html</code> into your page's{' '}
+                <code>&lt;head&gt;</code> and adjust paths if the icons are in a
+                different folder.
+              </li>
+              <li>
+                Edit the name, colors, start URL and scope in{' '}
+                <code>site.webmanifest</code> for your website. Build and
+                deploy, then check that the linked icon files load.
+              </li>
+            </ol>
+            <p class="help-reference">
+              <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Attributes/rel#icon">
+                MDN guide to favicon links
+              </a>
+            </p>
+          </section>
+          <section aria-labelledby="questions-heading">
+            <h2 id="questions-heading">Common questions</h2>
+            {faviconQuestions.map((item) => (
+              <details id={item.id}>
+                <summary>{item.question}</summary>
+                <p>{item.answer}</p>
+                {item.reference && (
+                  <p class="help-reference">
+                    <a href={item.reference.href}>{item.reference.label}</a>
+                  </p>
+                )}
+              </details>
+            ))}
+          </section>
+        </div>
+      </main>
+      <footer class="site-footer">
+        <p>A VINASIG tool. Made to stay simple.</p>
+        <a href="https://github.com/VINASIG/favicon-forge/issues">
+          Report an issue
+        </a>
+      </footer>
+    </div>
     <noscript>
-      <p class="page-shell">
+      <p class="app-shell no-script">
         JavaScript is required to create a favicon package locally. Enable
         JavaScript to use the generator.
       </p>

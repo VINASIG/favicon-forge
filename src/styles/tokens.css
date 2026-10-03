@@ -110,3 +110,28 @@
   --radius-pill: 999px;
   --shadow-soft: 0 18px 48px rgb(41 37 38 / 7%);
 }
+
+/* Theme aliases adopted from VINASIG's QR and adult-BMI applications. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+
+    --color-canvas: #1f1c1d;
+    --color-surface: #292526;
+    --color-surface-muted: #353031;
+    --color-surface-hover: #3c3537;
+    --color-text: #f7f4f1;
+    --color-text-muted: #cecaca;
+    --color-border: #534b4d;
+    --color-border-strong: #807778;
+    --color-info: #bdcddd;
+    --color-info-background: #26303d;
+    --color-info-border: #697e9c;
+    --color-success: #bfd9b8;
+    --color-success-background: #243322;
+    --color-error: #efc2bb;
+    --color-error-background: #3f2926;
+    --color-error-border: #9e665d;
+    --color-focus: #8bb3ff;
+  }
+}

@@ -76,7 +76,11 @@ try {
     parseJson(await readLocal(repositoryRoot, 'docs/asset-manifest.json')),
   );
   const assets = Object.entries(record(manifest['files']));
-  assert.equal(assets.length, 10);
+  assert.equal(assets.length, 11);
+  assert(source.includes('name="color-scheme" content="light dark"'));
+  assert(source.includes('media="(prefers-color-scheme: dark)"'));
+  assert(source.includes('brand/reversed.svg'));
+  assert(source.includes('id="empty-preview"'));
   for (const [file, expectedDigest] of assets) {
     assert(
       file.startsWith('public/'),
