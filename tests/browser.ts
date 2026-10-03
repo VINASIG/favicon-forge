@@ -75,8 +75,12 @@ async function settle(page: Page): Promise<void> {
   });
 }
 
-async function screenshot(page: Page, name: string): Promise<string> {
-  await settle(page);
+async function screenshot(
+  page: Page,
+  name: string,
+  scriptsEnabled = true,
+): Promise<string> {
+  if (scriptsEnabled) await settle(page);
   await page.evaluate(() => {
     window.scrollTo(0, document.documentElement.scrollHeight);
   });
@@ -84,7 +88,12 @@ async function screenshot(page: Page, name: string): Promise<string> {
     window.scrollTo(0, 0);
   });
   const file = path.join(output, `${name}.png`);
-  await page.screenshot({ path: file, fullPage: true });
+  await page.screenshot({
+    path: file,
+    fullPage: true,
+    animations: scriptsEnabled ? 'allow' : 'disabled',
+    timeout: 30_000,
+  });
   return path.relative(repositoryRoot, file);
 }
 
@@ -263,6 +272,7 @@ try {
           shots.push(await screenshot(page, `${name}-help-open`));
           await closeHelp(page);
           if (width === 1440 && reducedMotion === 'reduce') {
+            console.log(`${name}: checking native help without JavaScript`);
             const staticContext = await browser.newContext({
               viewport: { width, height },
               javaScriptEnabled: false,
@@ -276,6 +286,9 @@ try {
                 )
                 .waitFor();
               await openHelp(staticPage, false);
+              console.log(
+                `${name}: native questions passed; capturing static help`,
+              );
               staticHelpChecks.push({
                 engine,
                 questions: faviconQuestions.length,
@@ -284,8 +297,10 @@ try {
                 screenshot: await screenshot(
                   staticPage,
                   `${name}-help-no-javascript`,
+                  false,
                 ),
               });
+              console.log(`${name}: static help screenshot saved`);
             } finally {
               await staticContext.close();
             }

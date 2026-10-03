@@ -45,7 +45,7 @@ try {
   assert.equal(application['description'], description);
   assert.equal(application['isAccessibleForFree'], true);
   assert(
-    source.includes(description),
+    source.includes(`<p>${description}</p>`),
     'Application description must be visible',
   );
   assert(source.includes('id="setup-heading"'), 'Missing static setup guide');
