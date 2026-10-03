@@ -42,7 +42,7 @@ a {
 
 button:focus-visible,
 a:focus-visible,
-summary:focus-visible {
+summary:focus {
   outline: 3px solid var(--color-focus);
   outline-offset: 4px;
 }

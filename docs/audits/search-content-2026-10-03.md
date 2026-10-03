@@ -28,6 +28,8 @@ Screenshot review caught Astro whitespace trimming around inline filenames in th
 
 Keyboard screenshots also showed the summary focus outline close to the first answer line. An existing 8 px spacing token now separates the answer from the summary, with a browser bounding-box regression to keep the focus outline clear of text.
 
+The first publication checks on Linux and Windows caught a Firefox native focus difference after touch followed by keyboard activation: the focused summary did not match `:focus-visible`. The disclosure outline now uses `:focus` so an active question stays visibly focused across input methods and platforms. The original browser assertion requiring the focus outline remains enabled.
+
 Before/after public and local screenshots and structured checks are kept under ignored `output/responsive/search-2026-10-03/`. The first comparison helper attempted to open Unphar's intentionally hidden archive-contents disclosure; its captures were preserved, and a fresh baseline opens only visible disclosures without changing the application. This was a comparison-driver error, not a Favicon Forge defect.
 
 Final source, browser, CI, publication and public-page receipts are recorded separately after the reviewed source candidate. This document cannot contain its own final commit hash.
