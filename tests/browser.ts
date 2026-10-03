@@ -13,6 +13,7 @@ import {
   writeOutput,
 } from '../scripts/local.ts';
 import { startPreview } from './helpers/preview.ts';
+import { faviconQuestions } from '../src/lib/help.ts';
 
 const launchers = { chromium, firefox, webkit };
 const engineNames = Object.keys(launchers);
@@ -51,6 +52,13 @@ const results: {
   noLogoUpload: boolean;
   packageFiles: number;
   motion: string;
+  helpQuestions: number;
+}[] = [];
+const staticHelpChecks: {
+  engine: string;
+  questions: number;
+  screenshot: string;
+  axe: 'NOT_RUN';
 }[] = [];
 
 async function settle(page: Page): Promise<void> {
@@ -90,6 +98,64 @@ async function accessibility(page: Page): Promise<void> {
     [],
     JSON.stringify(report.violations, null, 2),
   );
+}
+
+async function openHelp(page: Page, touch: boolean): Promise<void> {
+  const setup = (await page.locator('.setup-steps').innerText()).replace(
+    /\s+/g,
+    ' ',
+  );
+  assert(setup.includes('icons and site.webmanifest into your'));
+  assert(setup.includes('markup from favicon-snippet.html into your'));
+  assert(setup.includes('scope in site.webmanifest for your website'));
+  assert.equal(
+    await page.locator('.help details').count(),
+    faviconQuestions.length,
+  );
+  for (const item of faviconQuestions) {
+    const detail = page.locator(`#${item.id}`);
+    const summary = detail.getByText(item.question, { exact: true });
+    assert.equal(await detail.getAttribute('open'), null);
+    if (touch) await summary.tap();
+    else {
+      await summary.focus();
+      await page.keyboard.press('Enter');
+    }
+    assert.equal(await detail.getAttribute('open'), '');
+    assert.equal(
+      await detail.getByText(item.answer, { exact: true }).isVisible(),
+      true,
+    );
+    const [summaryBox, answerBox] = await Promise.all([
+      summary.boundingBox(),
+      detail.getByText(item.answer, { exact: true }).boundingBox(),
+    ]);
+    assert(summaryBox && answerBox);
+    assert(
+      answerBox.y >= summaryBox.y + summaryBox.height + 8,
+      'Help answers must leave room for the summary focus outline',
+    );
+  }
+}
+
+async function closeHelp(page: Page): Promise<void> {
+  for (const item of faviconQuestions) {
+    const detail = page.locator(`#${item.id}`);
+    const summary = detail.getByText(item.question, { exact: true });
+    await summary.focus();
+    await page.keyboard.press('Space');
+    assert.equal(await detail.getAttribute('open'), null);
+    assert.equal(
+      await summary.evaluate((element) => element === document.activeElement),
+      true,
+    );
+    assert.equal(
+      await summary.evaluate(
+        (element) => getComputedStyle(element).outlineStyle,
+      ),
+      'solid',
+    );
+  }
 }
 
 async function selectionRace(page: Page): Promise<void> {
@@ -192,6 +258,38 @@ try {
           assert.equal((await page.goto(server.url))?.status(), 200);
           await accessibility(page);
           shots.push(await screenshot(page, `${name}-empty`));
+          await openHelp(page, width === 390);
+          await accessibility(page);
+          shots.push(await screenshot(page, `${name}-help-open`));
+          await closeHelp(page);
+          if (width === 1440 && reducedMotion === 'reduce') {
+            const staticContext = await browser.newContext({
+              viewport: { width, height },
+              javaScriptEnabled: false,
+            });
+            try {
+              const staticPage = await staticContext.newPage();
+              assert.equal((await staticPage.goto(server.url))?.status(), 200);
+              await staticPage
+                .getByText(
+                  /JavaScript is required to create a favicon package locally/,
+                )
+                .waitFor();
+              await openHelp(staticPage, false);
+              staticHelpChecks.push({
+                engine,
+                questions: faviconQuestions.length,
+                // Axe needs JavaScript execution; the same open content is scanned above.
+                axe: 'NOT_RUN',
+                screenshot: await screenshot(
+                  staticPage,
+                  `${name}-help-no-javascript`,
+                ),
+              });
+            } finally {
+              await staticContext.close();
+            }
+          }
           const chooser = page.waitForEvent('filechooser');
           const choose = page.getByRole('button', {
             name: 'Choose or drop a logo',
@@ -396,11 +494,12 @@ try {
           assert.deepEqual(errors, []);
           results.push({
             name,
-            accessibilityScans: 3,
+            accessibilityScans: 4,
             screenshots: shots,
             noLogoUpload: true,
             packageFiles: 10,
             motion: animationName,
+            helpQuestions: faviconQuestions.length,
           });
           await context.close();
         }
@@ -410,6 +509,7 @@ try {
     }
   }
   assert.equal(results.length, expectedCases);
+  assert.equal(staticHelpChecks.length, requestedEngines.length);
   completed = true;
 } finally {
   await server.stop();
@@ -426,6 +526,7 @@ try {
         expectedCases,
         cases: results.length,
         results,
+        staticHelpChecks,
         independentAgentTrial: 'NOT_RUN',
         realDevicesAndScreenReader: 'NOT_RUN',
       },

@@ -41,7 +41,8 @@ a {
 }
 
 button:focus-visible,
-a:focus-visible {
+a:focus-visible,
+summary:focus-visible {
   outline: 3px solid var(--color-focus);
   outline-offset: 4px;
 }
@@ -406,6 +407,65 @@ a:focus-visible {
   color: var(--color-text-muted);
   font-size: var(--font-size-small);
   text-align: center;
+}
+
+.help {
+  max-width: 72ch;
+  margin: 0 auto var(--space-12);
+  border-top: 1px solid var(--color-border);
+  overflow-wrap: anywhere;
+}
+
+.help section {
+  padding-top: var(--space-6);
+}
+
+.help h2 {
+  margin: 0 0 var(--space-4);
+  font-size: var(--font-size-heading-small);
+  line-height: 1.3;
+}
+
+.help p {
+  margin: 0 0 var(--space-4);
+}
+
+.setup-steps {
+  margin: 0 0 var(--space-4);
+  padding-inline-start: var(--space-6);
+}
+
+.setup-steps li + li {
+  margin-top: var(--space-3);
+}
+
+.help code {
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: 500;
+}
+
+.help details {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.help details > p:first-of-type {
+  margin-top: var(--space-2);
+}
+
+.help summary {
+  min-height: 44px;
+  padding-block: var(--space-4);
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.help summary::marker {
+  color: var(--color-info-accent);
+}
+
+.help-reference {
+  font-size: var(--font-size-small);
 }
 
 .spinner {

@@ -3,6 +3,7 @@ import { ArrowUpRight, Download, ShieldCheck, Upload } from '@lucide/astro';
 import '../styles/tokens.css';
 import '../styles/app.css';
 import { publicPage } from '../lib/site.ts';
+import { description, faviconQuestions } from '../lib/help.ts';
 
 const basePath = import.meta.env.BASE_URL.endsWith('/')
   ? import.meta.env.BASE_URL
@@ -13,13 +14,12 @@ const structuredData = {
   '@type': 'WebApplication',
   name: 'VINASIG Favicon Forge',
   url: canonicalURL.href,
+  description,
   applicationCategory: 'DeveloperApplication',
   operatingSystem: 'Any',
   isAccessibleForFree: true,
   browserRequirements: 'Requires JavaScript and Canvas support.',
 };
-const description =
-  'Generate a complete favicon package from your logo with VINASIG Favicon Forge. Your image stays in your browser.';
 ---
 
 <!doctype html>
@@ -180,6 +180,52 @@ const description =
           </p>
         </div>
       </section>
+      <div class="help">
+        <section aria-labelledby="setup-heading">
+          <h2 id="setup-heading">How to use your favicon package</h2>
+          <p>{description}</p>
+          <p>
+            Favicons identify your website in browser tabs and bookmarks. The
+            package also includes larger icons for saved or installed web apps.
+          </p>
+          <ol class="setup-steps">
+            <li>
+              Choose a logo, review the previews and download the ZIP package.
+            </li>
+            <li>
+              Extract the icons and <code>site.webmanifest</code> into your
+              site's public folder. Copy the markup from{' '}
+              <code>favicon-snippet.html</code> into your page's{' '}
+              <code>&lt;head&gt;</code> and adjust paths if the icons are in a
+              different folder.
+            </li>
+            <li>
+              Edit the name, colors, start URL and scope in{' '}
+              <code>site.webmanifest</code> for your website. Build and deploy,
+              then check that the linked icon files load.
+            </li>
+          </ol>
+          <p class="help-reference">
+            <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Attributes/rel#icon">
+              MDN guide to favicon links
+            </a>
+          </p>
+        </section>
+        <section aria-labelledby="questions-heading">
+          <h2 id="questions-heading">Common questions</h2>
+          {faviconQuestions.map((item) => (
+            <details id={item.id}>
+              <summary>{item.question}</summary>
+              <p>{item.answer}</p>
+              {item.reference && (
+                <p class="help-reference">
+                  <a href={item.reference.href}>{item.reference.label}</a>
+                </p>
+              )}
+            </details>
+          ))}
+        </section>
+      </div>
     </main>
     <noscript>
       <p class="page-shell">

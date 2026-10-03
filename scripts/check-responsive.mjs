@@ -73,6 +73,16 @@ async function checkLayout(page, name, expectedColumns) {
     )
       problems.push('Document overflows horizontally');
     const source = element('.source-link').getBoundingClientRect();
+    const help = element('.help').getBoundingClientRect();
+    const summaries = [...document.querySelectorAll('.help summary')];
+    if (summaries.length !== 5) problems.push('A help question is missing');
+    for (const summary of summaries) {
+      const box = summary.getBoundingClientRect();
+      if (!fits(box, help))
+        problems.push('A help question exceeds its section');
+      if (box.height < 44)
+        problems.push('A help question has a small hit target');
+    }
     const range = document.createRange();
     range.selectNodeContents(element('.product-name'));
     if (
@@ -168,6 +178,21 @@ try {
         document.documentElement.style.fontSize = `${String(percent)}%`;
       }, fontPercent);
       await checkLayout(page, `${name}--empty`);
+      const summaries = await page.locator('.help summary').all();
+      for (const summary of summaries) {
+        if (width <= 390) await summary.tap();
+        else {
+          await summary.focus();
+          await page.keyboard.press('Enter');
+        }
+      }
+      assert.equal(await page.locator('.help details[open]').count(), 5);
+      await checkLayout(page, `${name}--help-open`);
+      for (const summary of summaries) {
+        await summary.focus();
+        await page.keyboard.press('Space');
+      }
+      assert.equal(await page.locator('.help details[open]').count(), 0);
       const chooserEvent = page.waitForEvent('filechooser');
       if (width <= 390) await page.locator('#drop-zone').tap();
       else {

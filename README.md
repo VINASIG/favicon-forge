@@ -48,7 +48,7 @@ Each check builds the current source, starts its own preview on an available por
 
 For a scoped local diagnosis, `BROWSER_ENGINES=chromium,webkit` selects those engines and records Firefox as unrun in the report. The default always selects all three. CI rejects any selection that omits an engine, so a local environment blocker cannot turn into a narrower publication gate.
 
-The responsive check covers 120 states across the five standard viewports, 320 CSS px, both sides of the 520 and 720 px breakpoints, intermediate widths and text enlarged to 200%. Assertions check horizontal overflow, header text collisions, preview images and labels, loading controls, file selection and validation. Inspect full-page screenshots alongside these checks. Reports are saved in `output/checks/`, with images and packages in `output/responsive/flows-*/` and `output/responsive/regression-*/`. These checks use browser emulation; physical devices, screen readers and independent agent trials need separate evidence.
+The responsive check covers 150 states across the five standard viewports, 320 CSS px, both sides of the 520 and 720 px breakpoints, intermediate widths and text enlarged to 200%. Assertions check horizontal overflow, header text collisions, help disclosures, preview images and labels, loading controls, file selection and validation. Browser flows also open and close help with keyboard/touch and inspect it without JavaScript in each engine. Inspect full-page screenshots alongside these checks. Reports are saved in `output/checks/`, with images and packages in `output/responsive/flows-*/` and `output/responsive/regression-*/`. These checks use browser emulation; physical devices, screen readers and independent agent trials need separate evidence.
 
 ## GitHub Pages
 
@@ -59,6 +59,8 @@ The workflow derives `SITE_URL` from the current repository owner and `BASE_PATH
 For a custom domain, set `SITE_URL` to its origin and `BASE_PATH` to an empty string before building. Keep preview configuration consistent with the build configuration.
 
 ## Generated package
+
+The page includes a static setup guide and five native disclosures about input limits, package contents, local processing, maskable icons and favicon troubleshooting. Help is available without JavaScript and uses primary browser/search documentation where relevant. The generator still requires JavaScript for local image processing.
 
 - `favicon.ico` containing 16 × 16, 32 × 32 and 48 × 48 images.
 - `favicon-16x16.png` and `favicon-32x32.png`.
