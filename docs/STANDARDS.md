@@ -1,12 +1,12 @@
 # Shared SI agent standards
 
-Favicon Forge adopts the reviewed `web-typescript` profile from [VINASIG Agent Standards](https://github.com/VINASIG/agent-standards/tree/c9d33c73a89edaf1773fa4d31f1c7258e549b7b1).
+Favicon Forge adopts the reviewed `web-typescript` profile from [VINASIG Agent Standards](https://github.com/VINASIG/agent-standards/tree/76901601b193c963b849b253d11f51363b447ffe).
 
 | Record            | Value                                                              |
 | ----------------- | ------------------------------------------------------------------ |
 | Standards version | `0.1.0`, public preview                                            |
-| Source commit     | `c9d33c73a89edaf1773fa4d31f1c7258e549b7b1`                         |
-| Bundle SHA-256    | `ad5dcbe4601a9a3668d3433330a582e6d780b8f2527e1dcc8cfbb93f8f264870` |
+| Source commit     | `76901601b193c963b849b253d11f51363b447ffe`                         |
+| Bundle SHA-256    | `bb555aad2e5c66da8ba2cdd5530446ca95c1235bb28706cb82066222adcb61f1` |
 | Profile           | `web-typescript`                                                   |
 | Managed files     | 37, plus the marked instruction block and manifest                 |
 | Owner provenance  | [`.vinasig/provenance.json`](../.vinasig/provenance.json)          |
@@ -30,3 +30,9 @@ Structural checks pass independently of Codex runtime discovery. A fresh Codex s
 Chromium, Firefox and WebKit are desktop browser engines with viewport/touch emulation. They do not prove behavior on a physical phone or Safari installation. Axe and deterministic role/name flows are partial accessibility and agent-usability evidence. Screen readers and an independent agent given only a URL and goal are separate unrun checks.
 
 Search metadata and the base-aware sitemap are checked locally and after deployment. GitHub project Pages cannot set the origin-root `robots.txt` from this repository. No crawler policy, indexing submission, account dashboard or telemetry collection is introduced. External ranking, answer-engine citations, field Core Web Vitals and repeated Lighthouse performance measurements remain separate evidence.
+
+## Interface rules approved on 3 October 2026
+
+The owner requested this standards update across VINASIG. LANG-004 requires natural punctuation, sentence case and custom list markers in authored interfaces. LANG-005 requires ordinary-reader language and limits parenthetical labels. Required code, URLs, times, regulatory identifiers, official names and user input retain their correct syntax.
+
+WEB-008 requires matching closed and opened dropdown, calendar, color and slider controls. Operating-system popups do not satisfy the requirement. The snapshot includes `templates/web/interface.mjs` for rendered-copy and control regressions. Consumer tests exercise real routes and dynamic states. Visual, keyboard and ordinary-language review remain necessary.

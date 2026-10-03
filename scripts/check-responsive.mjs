@@ -5,6 +5,7 @@ import path from 'node:path';
 import { chromium } from 'playwright';
 import { startPreview } from '../tests/helpers/preview.ts';
 import { repositoryRoot } from './local.ts';
+import { inspectInterface } from '../.vinasig/standards/templates/web/interface.mjs';
 
 const output = path.join(
   repositoryRoot,
@@ -154,6 +155,8 @@ async function checkLayout(page, name, expectedColumns) {
     window.scrollTo(0, 0);
   });
   await page.screenshot({ path: screenshot, fullPage: true });
+  const copyFindings = await page.evaluate(inspectInterface);
+  if (copyFindings.length) problems.push(JSON.stringify(copyFindings));
   if (problems.length) failures.push({ name, problems, screenshot });
 }
 

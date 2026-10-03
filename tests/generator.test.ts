@@ -153,7 +153,8 @@ await test('canonical and sitemap honor a project base and a root custom domain'
 });
 await test('the reviewed web profile and all managed snapshot files pass', async () => {
   const report = await verifyStandards();
-  assert.equal(report.files, 37);
+  // The approved snapshot adds the portable visible-interface inspector.
+  assert.equal(report.files, 38);
   assert.equal(report.runtimeDiscovery, 'NOT_RUN');
 });
 await test('production source and regression scripts do not suppress type checking', async () => {
