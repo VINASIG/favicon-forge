@@ -2,7 +2,7 @@
 
 Generate a complete favicon package from one logo. Choose or drop an image, review the output sizes, and download a ZIP. Image decoding, resizing and packaging happen in your browser. The application does not upload your logo or require an account.
 
-- [Open Favicon Forge](https://vinasig.github.io/favicon-forge/)
+- [Open Favicon Forge](https://favicon.vinasig.io.vn/)
 - [Source repository](https://github.com/VINASIG/favicon-forge)
 - [VINASIG](https://github.com/VINASIG)
 
@@ -21,7 +21,7 @@ npx --yes npm@12.2.0 ci --ignore-scripts
 npx --yes npm@12.2.0 run dev
 ```
 
-Open the URL printed by Astro. The default is `http://localhost:4321/favicon-forge/`; Astro may choose another port when that port is occupied. The base path matches the published project site.
+Open the URL printed by Astro. The default is `http://localhost:4321/`; Astro may choose another port when that port is occupied. The root base matches the canonical custom-domain site.
 
 ```sh
 npx --yes npm@12.2.0 run check
@@ -54,9 +54,9 @@ The responsive check covers 150 states across the five standard viewports, 320 C
 
 The workflow in [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) runs source, unit, build and all browser/responsive gates on **Windows and Linux** for pull requests and pushes to `main`. It retains reports/screenshots for 14 days. Pages deploys only after both operating systems pass, on `main`; pull requests do not deploy. The Pages source must be **GitHub Actions**.
 
-The workflow derives `SITE_URL` from the current repository owner and `BASE_PATH` from the repository name. The VINASIG deployment uses `https://vinasig.github.io/favicon-forge/`. Asset paths, the local font and canonical metadata respect the deployment base path.
+The workflow explicitly sets `SITE_URL=https://favicon.vinasig.io.vn` and `BASE_PATH=/` for the canonical deployment. The VINASIG deployment uses `https://favicon.vinasig.io.vn/`. Asset paths, the local font and canonical metadata respect the deployment base path.
 
-For a custom domain, set `SITE_URL` to its origin and `BASE_PATH` to an empty string before building. Keep preview configuration consistent with the build configuration.
+For another explicitly reviewed deployment, set `SITE_URL` to its origin and `BASE_PATH` to the actual base before building. Keep preview configuration consistent with the build configuration.
 
 ## Generated package
 
@@ -77,6 +77,10 @@ The generated images come from the uploaded logo. The maskable icon uses an opaq
 VINASIG-authored application code uses AGPL-3.0-or-later and authored documentation uses CC-BY-SA-4.0. Logo artwork follows [the separate brand policy](BRAND_POLICY.md). Space Grotesk's SIL Open Font License is included at [`public/fonts/OFL.txt`](public/fonts/OFL.txt). The published site includes the existing [Lucide notices](public/licenses/lucide.txt) and [JSZip license text](public/licenses/jszip.txt), unchanged for their respective dependencies.
 
 See [LICENSES.md](LICENSES.md) for the current grant and exclusions, [LICENSE_STATUS.md](LICENSE_STATUS.md) for the rights record and [SECURITY.md](SECURITY.md) for private vulnerability reporting.
+
+## Canonical domain
+
+The public site uses [favicon.vinasig.io.vn](https://favicon.vinasig.io.vn/) at the origin root. GitHub Pages remains the deployment service. [Domain maintenance](docs/DOMAIN.md) records DNS, HTTPS, search submission and verification boundaries.
 
 ## License scopes
 

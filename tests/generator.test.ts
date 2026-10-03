@@ -141,8 +141,8 @@ await test('canonical and sitemap honor a project base and a root custom domain'
     'https://vinasig.github.io/favicon-forge/',
   );
   assert.equal(
-    publicPage(new URL('https://example.org'), '').href,
-    'https://example.org/',
+    publicPage(new URL('https://favicon.vinasig.io.vn'), '/').href,
+    'https://favicon.vinasig.io.vn/',
   );
   assert(
     sitemap(new URL('https://example.org'), '/tools').includes(

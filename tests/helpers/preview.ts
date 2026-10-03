@@ -8,7 +8,7 @@ export async function startPreview() {
     server: { host: '127.0.0.1', port: 0 },
     logLevel: 'error',
   });
-  const base = process.env['BASE_PATH'] ?? '/favicon-forge';
+  const base = process.env['BASE_PATH'] ?? '/';
   return {
     url: `http://127.0.0.1:${String(server.port)}${base.replace(/\/$/, '')}/`,
     stop: () => server.stop(),

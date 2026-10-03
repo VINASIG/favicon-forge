@@ -28,8 +28,8 @@ try {
     ),
   );
   const expected = publicPage(
-    new URL(process.env['SITE_URL'] ?? 'https://vinasig.github.io'),
-    process.env['BASE_PATH'] ?? '/favicon-forge',
+    new URL(process.env['SITE_URL'] ?? 'https://favicon.vinasig.io.vn'),
+    process.env['BASE_PATH'] ?? '/',
   ).href;
   assert(source.includes(`href="${expected}"`), 'Missing canonical URL');
   const schemas = [
@@ -67,6 +67,11 @@ try {
     xml.includes(`<loc>${expected}</loc>`),
     'Sitemap and canonical differ',
   );
+  const robots = (await readLocal(repositoryRoot, 'dist/robots.txt')).toString(
+    'utf8',
+  );
+  assert(robots.includes('Allow: /'));
+  assert(robots.includes(`Sitemap: ${expected}sitemap.xml`));
   const manifest = record(
     parseJson(await readLocal(repositoryRoot, 'docs/asset-manifest.json')),
   );

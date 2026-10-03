@@ -35,18 +35,12 @@ jobs:
       - name: Install dependencies
         run: npx --yes npm@12.2.0 ci --ignore-scripts --no-fund
 
-      - name: Determine Pages base path
+      - name: Use the canonical custom domain
         id: site
         shell: bash
         run: |
-          repository="${GITHUB_REPOSITORY#*/}"
-          owner="${GITHUB_REPOSITORY_OWNER,,}"
-          echo "site_url=https://$owner.github.io" >> "$GITHUB_OUTPUT"
-          if [[ "$repository" == *.github.io ]]; then
-            echo "base_path=" >> "$GITHUB_OUTPUT"
-          else
-            echo "base_path=/$repository" >> "$GITHUB_OUTPUT"
-          fi
+          echo "site_url=https://favicon.vinasig.io.vn" >> "$GITHUB_OUTPUT"
+          echo "base_path=/" >> "$GITHUB_OUTPUT"
 
       - name: Check source and standards
         run: npx --yes npm@12.2.0 run check

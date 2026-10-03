@@ -1,9 +1,9 @@
 import { defineConfig } from 'astro/config';
 
-// The workflow supplies the current owner and repository path at build time.
-// Set BASE_PATH to an empty string for a custom domain or organization root site.
+// Production uses the verified VINASIG custom domain at the origin root.
+// Environment overrides remain available for an explicitly reviewed deployment.
 export default defineConfig({
   output: 'static',
-  site: process.env.SITE_URL || 'https://vinasig.github.io',
-  base: process.env.BASE_PATH ?? '/favicon-forge',
+  site: process.env.SITE_URL || 'https://favicon.vinasig.io.vn',
+  base: process.env.BASE_PATH ?? '/',
 });

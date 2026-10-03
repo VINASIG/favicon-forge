@@ -29,7 +29,7 @@ Structural checks pass independently of Codex runtime discovery. A fresh Codex s
 
 Chromium, Firefox and WebKit are desktop browser engines with viewport/touch emulation. They do not prove behavior on a physical phone or Safari installation. Axe and deterministic role/name flows are partial accessibility and agent-usability evidence. Screen readers and an independent agent given only a URL and goal are separate unrun checks.
 
-Search metadata and the base-aware sitemap are checked locally and after deployment. GitHub project Pages cannot set the origin-root `robots.txt` from this repository. No crawler policy, indexing submission, account dashboard or telemetry collection is introduced. External ranking, answer-engine citations, field Core Web Vitals and repeated Lighthouse performance measurements remain separate evidence.
+Search metadata and the base-aware sitemap are checked locally and after deployment. The canonical custom-domain deployment publishes its own origin-root robots.txt and sitemap. The owner separately authorized DNS verification and Search Console setup on 4 October 2026. No analytics or input telemetry is introduced. External ranking, answer-engine citations, field Core Web Vitals and repeated Lighthouse performance measurements remain separate evidence.
 
 ## Interface rules approved on 3 October 2026
 
