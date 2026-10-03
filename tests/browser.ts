@@ -6,7 +6,10 @@ import AxeBuilder from '@axe-core/playwright';
 import JSZip from 'jszip';
 import { chromium, firefox, webkit } from 'playwright';
 import type { Page } from 'playwright';
-import { inspectInterface } from '../.vinasig/standards/templates/web/interface.mjs';
+import {
+  inspectInterface,
+  inspectHeaderBrand,
+} from '../.vinasig/standards/templates/web/interface.mjs';
 import {
   repositoryRoot,
   parseJson,
@@ -96,6 +99,7 @@ async function screenshot(
     timeout: 30_000,
   });
   assert.deepEqual(await page.evaluate(inspectInterface), [], name);
+  assert.deepEqual(await page.evaluate(inspectHeaderBrand), [], name);
   return path.relative(repositoryRoot, file);
 }
 

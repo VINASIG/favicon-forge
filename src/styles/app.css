@@ -85,7 +85,9 @@ summary:focus {
 }
 
 .brand-link {
-  display: block;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
   flex-shrink: 0;
 }
 

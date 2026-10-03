@@ -43,3 +43,7 @@ Branding applies to the generator's interface and setup attribution. Generated i
 ## Licenses
 
 The font's OFL file and dependency license records remain applicable. Existing Lucide and JSZip license texts are also copied into `public/licenses/` for the published site.
+
+## Header review on 4 October 2026
+
+The website keeps its light canvas for both system color preferences. The transparent Primary Color lockup remains correct in both. There is no logo card or background to remove. The logo link now has a minimum 44 px hit height without padding or altered artwork. Do not select a white wordmark merely because the operating system requests dark mode.
