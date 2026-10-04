@@ -58,3 +58,7 @@ Light mode retains the shared neutral canvas and Primary Color header export. Da
 The added Reversed asset is copied unchanged from web-design-system commit `6ab0a23442b6bcbfd9815d0e6549b1a004095241`. Its SHA-256 is `98ceaaace06835138856d3710b4fed38714528573f78b19e710db796aea53d07`. All ten earlier public assets remain unchanged. The asset manifest checks all eleven assets in source and the built publication.
 
 The generator keeps image decoding, geometry, ICO construction, manifest/snippet creation and ZIP contents independent of the interface theme. The file-picker button is enabled only after its local handlers are attached. The disabled download and empty preview explain the initial state. CSS motion is brief, at most 360 ms with 4 px entrance movement, and has an immediate reduced-motion state.
+
+## Appearance control approved on 5 October 2026
+
+The owner selected the existing TOTP and QR Scanner appearance pattern for VINASIG websites. Use decorative Lucide Sun and Moon SVGs at 20 CSS px inside a button with a target of at least 44 CSS px. Light mode shows Moon to offer dark mode. Dark mode shows Sun to offer light mode. Keep a localized action name, pressed state, visible keyboard focus and the unchanged language link. Do not replace these recognizable icons with filled squares. Regression checks inspect both icons, their visibility and dimensions before and after toggling, persistence and blocked storage.
