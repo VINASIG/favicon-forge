@@ -8,6 +8,7 @@ import { chromium, firefox, webkit } from 'playwright';
 import type { Page } from 'playwright';
 import {
   inspectInterface,
+  inspectControlSurfaces,
   inspectHeaderBrand,
 } from '../.vinasig/standards/templates/web/interface.mjs';
 import {
@@ -100,6 +101,8 @@ async function screenshot(
     timeout: 30_000,
   });
   assert.deepEqual(await page.evaluate(inspectInterface), [], name);
+  assert((await page.locator('input,button,summary').count()) > 0);
+  assert.deepEqual(await page.evaluate(inspectControlSurfaces), [], name);
   assert.deepEqual(await page.evaluate(inspectHeaderBrand), [], name);
   return path.relative(repositoryRoot, file);
 }
