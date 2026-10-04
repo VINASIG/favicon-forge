@@ -113,7 +113,7 @@
 
 /* Theme aliases adopted from VINASIG's QR and adult-BMI applications. */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme='light']) {
     color-scheme: dark;
 
     --color-canvas: #1f1c1d;

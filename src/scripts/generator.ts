@@ -1,4 +1,9 @@
 import JSZip from 'jszip';
+import dictionary from '../locales/vi.json';
+import { translateCopy } from '../lib/localization.ts';
+const vietnamese = document.documentElement.lang === 'vi';
+const t = (value: string): string =>
+  vietnamese ? translateCopy(value, dictionary) : value;
 import {
   createIco,
   errorMessage,
@@ -58,7 +63,7 @@ let reading = false;
 let packaging = false;
 
 function showError(message: string): void {
-  error.textContent = message;
+  error.textContent = t(message);
   error.hidden = false;
 }
 function clearError(): void {
@@ -71,13 +76,16 @@ function readingState(active: boolean): void {
   downloadButton.disabled = active || current === null;
   if (active) {
     dropZone.setAttribute('aria-busy', 'true');
-    dropSubtitle.textContent =
-      'Reading your image. You can choose another logo.';
+    dropSubtitle.textContent = t(
+      'Reading your image. You can choose another logo.',
+    );
   } else {
     dropZone.removeAttribute('aria-busy');
-    dropSubtitle.textContent = current
-      ? 'PNG, JPG, WebP or SVG. Up to 10 MB. Choose a new file to replace this logo.'
-      : 'PNG, JPG, WebP or SVG. Up to 10 MB. 512 by 512 pixels or larger recommended.';
+    dropSubtitle.textContent = t(
+      current
+        ? 'PNG, JPG, WebP or SVG. Up to 10 MB. Choose a new file to replace this logo.'
+        : 'PNG, JPG, WebP or SVG. Up to 10 MB. 512 by 512 pixels or larger recommended.',
+    );
   }
 }
 
@@ -112,7 +120,9 @@ async function handleFile(file: File | undefined): Promise<void> {
     sourcePreview.src = createIconCanvas(canvas, source.bounds, 256).toDataURL(
       'image/png',
     );
-    sourcePreview.alt = `Logo ${file.name}`;
+    sourcePreview.alt = vietnamese
+      ? `Logo đã chọn ${file.name}`
+      : `Logo ${file.name}`;
     fileMeta.textContent = `${file.name} · ${String(canvas.width)}×${String(canvas.height)} · ${formatBytes(file.size)}`;
     renderPreviews(source);
     current = source;
@@ -120,8 +130,8 @@ async function handleFile(file: File | undefined): Promise<void> {
     sourcePanel.hidden = false;
     emptyPreview.hidden = true;
     dropZone.classList.add('has-file');
-    dropZone.setAttribute('aria-label', 'Choose or drop another logo');
-    dropTitle.textContent = 'Drop or choose another logo';
+    dropZone.setAttribute('aria-label', t('Choose or drop another logo'));
+    dropTitle.textContent = t('Drop or choose another logo');
   } catch (reason) {
     if (request === selection) showError(errorMessage(reason));
   } finally {
@@ -182,7 +192,7 @@ async function downloadPackage(): Promise<void> {
   dropZone.disabled = true;
   downloadButton.setAttribute('aria-busy', 'true');
   downloadButton.classList.add('is-loading');
-  downloadLabel.textContent = 'Creating package';
+  downloadLabel.textContent = t('Creating package');
   downloadIcon.setAttribute('hidden', '');
   downloadSpinner.hidden = false;
   try {
@@ -198,14 +208,16 @@ async function downloadPackage(): Promise<void> {
       URL.revokeObjectURL(url);
     }, 1000);
   } catch (reason) {
-    showError(`Could not create the ZIP file. ${errorMessage(reason)}`);
+    showError(
+      `${t('Could not create the ZIP file.')} ${t(errorMessage(reason))}`,
+    );
   } finally {
     packaging = false;
     downloadButton.disabled = false;
     dropZone.disabled = false;
     downloadButton.removeAttribute('aria-busy');
     downloadButton.classList.remove('is-loading');
-    downloadLabel.textContent = 'Download package';
+    downloadLabel.textContent = t('Download package');
     downloadIcon.removeAttribute('hidden');
     downloadSpinner.hidden = true;
   }

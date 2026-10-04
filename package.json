@@ -30,9 +30,10 @@
     "check:built": "node scripts/check-built.ts",
     "check": "npm run typecheck && npm run lint && npm run lint:css && npm run format:check && npm run check:standards && npm run check:licenses",
     "test": "node --test tests/*.test.ts",
-    "test:browser": "node tests/browser.ts",
+    "test:browser": "node tests/browser.ts && npm run test:localization",
     "test:responsive": "node scripts/check-responsive.mjs",
-    "check:licenses": "node .vinasig/standards/templates/check-licenses.mjs"
+    "check:licenses": "node .vinasig/standards/templates/check-licenses.mjs",
+    "test:localization": "node tests/localization.mjs"
   },
   "dependencies": {
     "@lucide/astro": "1.50.0",

@@ -142,10 +142,18 @@ async function openHelp(page: Page, touch: boolean): Promise<void> {
       await detail.getByText(item.answer, { exact: true }).isVisible(),
       true,
     );
-    const [summaryBox, answerBox] = await Promise.all([
-      summary.boundingBox(),
-      detail.getByText(item.answer, { exact: true }).boundingBox(),
-    ]);
+    // Read both boxes in one frame because native disclosure scroll anchoring
+    // can move the viewport between separate browser protocol calls.
+    const [summaryBox, answerBox] = await detail.evaluate((element) => {
+      const heading = element.querySelector('summary');
+      const answer = element.querySelector('p');
+      const headingBox = heading?.getBoundingClientRect();
+      const answerBox = answer?.getBoundingClientRect();
+      return [
+        headingBox && { y: headingBox.y, height: headingBox.height },
+        answerBox && { y: answerBox.y, height: answerBox.height },
+      ];
+    });
     assert(summaryBox && answerBox);
     assert(
       answerBox.y >= summaryBox.y + summaryBox.height + 8,

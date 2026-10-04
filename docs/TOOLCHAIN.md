@@ -38,3 +38,7 @@ Node and npm are project-scoped. Normal execution and CI pin npm 12.2.0, with no
 [Dependabot](../.github/dependabot.yml) proposes npm/action updates for review. It does not merge updates automatically. Rerun source, unit, built-site and browser gates before accepting a version change.
 
 Primary lookup sources: [npm registry](https://registry.npmjs.org/), [Node release index](https://nodejs.org/dist/index.json), [Astro TypeScript guide](https://docs.astro.build/en/guides/typescript/), [Astro ESLint adapter](https://ota-meshi.github.io/eslint-plugin-astro/user-guide/) and the official action repositories linked in the workflow.
+
+## Bilingual regression
+
+Read docs/LOCALIZATION.md. Language and appearance regression tests run through the existing browser command. They cover both built locales, native navigation without scripts, metadata, localized guidance, keyboard controls, theme persistence and blocked storage. Authored textarea guidance is translated while its content remains literal. The original core and responsive assertions remain enabled.
