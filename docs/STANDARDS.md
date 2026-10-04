@@ -1,12 +1,12 @@
 # Shared SI agent standards
 
-Favicon Forge adopts the reviewed `web-typescript` profile from [VINASIG Agent Standards](https://github.com/VINASIG/agent-standards/tree/31b105622b1c70f6ad362eaaab429a9afa4b1a18).
+Favicon Forge adopts the reviewed `web-typescript` profile from [VINASIG Agent Standards](https://github.com/VINASIG/agent-standards/tree/59c4b39cfd5f6aa90050da529af1d9894cfe41fb).
 
 | Record            | Value                                                              |
 | ----------------- | ------------------------------------------------------------------ |
 | Standards version | `0.1.0`, public preview                                            |
-| Source commit     | `31b105622b1c70f6ad362eaaab429a9afa4b1a18`                         |
-| Bundle SHA-256    | `e7d0fe4b417a782f0613a3367c458e9ff384fed1c43435f76c17252b5c7560e1` |
+| Source commit     | `59c4b39cfd5f6aa90050da529af1d9894cfe41fb`                         |
+| Bundle SHA-256    | `e6cd21c55a61f02466f767029f05a2d23898fed5a6fd386f08f733dcbbbf6439` |
 | Profile           | `web-typescript`                                                   |
 | Managed files     | 47, plus the marked instruction block and manifest                 |
 | Owner provenance  | [`.vinasig/provenance.json`](../.vinasig/provenance.json)          |
