@@ -76,7 +76,15 @@ async function checkLayout(page, name, expectedColumns) {
       document.documentElement.clientWidth + 1
     )
       problems.push('Document overflows horizontally');
-    const source = element('.source-link').getBoundingClientRect();
+    const source = element(
+      '[data-site-footer] [data-source-link]',
+    ).getBoundingClientRect();
+    const preferences = element('.site-preferences').getBoundingClientRect();
+    const footer = element('[data-site-footer]').getBoundingClientRect();
+    if (!fits(source, footer) || source.height < 44)
+      problems.push(
+        'Footer source link exceeds its container or has a small hit target',
+      );
     const help = element('.help').getBoundingClientRect();
     const summaries = [...document.querySelectorAll('.help summary')];
     if (summaries.length !== 5) problems.push('A help question is missing');
@@ -89,16 +97,16 @@ async function checkLayout(page, name, expectedColumns) {
     }
     const brand = element('.brand-link').getBoundingClientRect();
     if (
-      brand.left < source.right &&
-      brand.right > source.left &&
-      brand.top < source.bottom &&
-      brand.bottom > source.top
+      brand.left < preferences.right &&
+      brand.right > preferences.left &&
+      brand.top < preferences.bottom &&
+      brand.bottom > preferences.top
     )
-      problems.push('Header logo overlaps View source');
+      problems.push('Header logo overlaps appearance/language controls');
     const header = element('.site-header').getBoundingClientRect();
-    if (!fits(brand, header) || !fits(source, header))
+    if (!fits(brand, header) || !fits(preferences, header))
       problems.push('Header links exceed their container');
-    if (brand.height < 44 || source.height < 44)
+    if (brand.height < 44 || preferences.height < 44)
       problems.push('A header link has a small hit target');
     const workspace = element('.workspace').getBoundingClientRect();
     for (const selector of [

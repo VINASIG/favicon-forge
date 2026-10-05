@@ -1,4 +1,6 @@
 ---
+import SiteFooter from '../components/SiteFooter.astro';
+import '../styles/site-chrome.css';
 import { Download, Image, ShieldCheck, Upload } from '@lucide/astro';
 import ThemeInit from '../components/ThemeInit.astro';
 import SitePreferences from '../components/SitePreferences.astro';
@@ -106,8 +108,8 @@ const structuredData = {
       <a class="skip-link" href="#main">
         Skip to generator
       </a>
-      <div class="app-shell">
-        <header class="site-header">
+      <div class="app-shell" data-site-shell>
+        <header class="site-header" data-site-header>
           <a
             class="brand-link brand"
             data-brand-logo
@@ -136,12 +138,6 @@ const structuredData = {
             </picture>
           </a>
           <div class="header-actions">
-            <a
-              class="source-link"
-              href="https://github.com/VINASIG/favicon-forge"
-            >
-              View source
-            </a>
             <SitePreferences
               lang={lang}
               alternate={lang === 'vi' ? basePath : `${basePath}vi/`}
@@ -296,12 +292,12 @@ const structuredData = {
             </section>
           </div>
         </main>
-        <footer class="site-footer">
-          <p>A VINASIG tool. Made to stay simple.</p>
-          <a href="https://github.com/VINASIG/favicon-forge/issues">
-            Report an issue
-          </a>
-        </footer>
+        <SiteFooter
+          lang={lang}
+          source="https://github.com/VINASIG/favicon-forge"
+          issues="https://github.com/VINASIG/favicon-forge/issues"
+          licenses={`${basePath}licenses/NOTICE.txt`}
+        />
       </div>
       <noscript>
         <p class="app-shell no-script">

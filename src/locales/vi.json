@@ -63,5 +63,8 @@
   "This image could not be read. Try another PNG, JPG, WebP or SVG file.": "Không đọc được ảnh. Hãy thử tệp PNG, JPG, WebP hoặc SVG khác.",
   "Canvas is unavailable in this browser.": "Trình duyệt này không hỗ trợ công cụ xử lý ảnh.",
   "An unexpected error occurred.": "Đã xảy ra lỗi không mong muốn.",
-  "Could not create the ZIP file.": "Không tạo được tệp ZIP."
+  "Could not create the ZIP file.": "Không tạo được tệp ZIP.",
+  "Source code": "Mã nguồn",
+  "Licenses": "Giấy phép",
+  "Website information": "Thông tin website"
 }
