@@ -213,7 +213,7 @@ async function themePresentation(
   assert.equal(presentation.scheme, colorScheme);
   assert.equal(
     presentation.canvas,
-    colorScheme === 'dark' ? 'rgb(31, 28, 29)' : 'rgb(247, 246, 244)',
+    colorScheme === 'dark' ? 'rgb(17, 17, 17)' : 'rgb(249, 249, 249)',
   );
   assert(
     presentation.logo.endsWith(expectedLogo),
