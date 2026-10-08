@@ -153,8 +153,7 @@ await test('canonical and sitemap honor a project base and a root custom domain'
 });
 await test('the reviewed web profile and all managed snapshot files pass', async () => {
   const report = await verifyStandards();
-  // The reviewed snapshot adds interface acceptance and shared preferences.
-  assert.equal(report.files, 55);
+  assert.equal(report.files, 56);
   for (const file of [
     'LICENSE',
     'LICENSES.md',
